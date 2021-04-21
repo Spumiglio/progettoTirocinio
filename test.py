@@ -1,2 +1,2 @@
-print("ciaoo")
-print("ciaoo")
+print("ciao")
+print("altro ciao")
