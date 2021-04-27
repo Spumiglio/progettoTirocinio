@@ -1,8 +1,4 @@
 import datetime
-import re
-
-from regex import *
-
 import pandas as pd
 import statsmodels
 import matplotlib.pyplot as plt
@@ -48,19 +44,18 @@ def weeksdistrubution(dativendita):
         for i in range(0, 12):
             data = datetime.fromisoformat(row[16])
             if data.isocalendar()[1]+i > 52:
-                week = str(data.isocalendar()[0]) + "-W" + str(count)
+                weekStr = str(data.isocalendar()[0]) + "-W" + str(count)
                 count +=1
-                if week in venditetemp.keys():
-                    venditetemp[week] += row[i + 3]
+                if weekStr in venditetemp.keys():
+                    venditetemp[weekStr] += row[i + 3]
                 else:
-                    venditetemp[week] = row[i + 3]
+                    venditetemp[weekStr] = row[i + 3]
             else:
-                week = str(data.isocalendar()[0]) + "-W" + str(data.isocalendar()[1]+i)
-                if week in venditetemp.keys():
-                    venditetemp[week] += row[i+3]
+                weekStr = str(data.isocalendar()[0]) + "-W" + str(data.isocalendar()[1]+i)
+                if weekStr in venditetemp.keys():
+                    venditetemp[weekStr] += row[i+3]
                 else:
-                    venditetemp[week] = row[i + 3]
-
+                    venditetemp[weekStr] = row[i + 3]
 
     for key in list(venditetemp.keys()):
         val.append(venditetemp[key])
@@ -68,6 +63,27 @@ def weeksdistrubution(dativendita):
     timeseries = pd.DataFrame(index=list(venditetemp.keys()))
     timeseries.insert(0, "vendite", val, allow_duplicates=True)
     return timeseries
+
+def weeksdistrubution2(dativendita):
+    val = []
+    venditetemp = {}
+
+    for row in dativendita.itertuples():
+        for i in range(0, 12):
+            weekStr = addWeek(row[15],i)
+            if weekStr in venditetemp.keys():
+                    venditetemp[weekStr] += row[i+3]
+            else:
+                    venditetemp[weekStr] = row[i + 3]
+
+    for key in list(venditetemp.keys()):
+        val.append(venditetemp[key])
+
+    timeseries = pd.DataFrame(index=list(venditetemp.keys()))
+    timeseries.insert(0, "vendite", val, allow_duplicates=True)
+    return timeseries
+
+
 
 
 def addWeek(date_string, weeks):
