@@ -72,7 +72,7 @@ def weeksdistrubution(dativendita):
 
 def addWeek(date_string, weeks):
     date_iso = datetime.strptime(date_string + '-1', "%Y-W%W-%w")
-    new_date = date_iso + timedelta(weeks=weeks)
+    new_date = date_iso + timedelta(weeks=weeks-1)
     new_date_iso = str(datetime.fromisoformat(new_date.isoformat()).isocalendar()[0]) + "-W" + \
            str(datetime.fromisoformat(new_date.isoformat()).isocalendar()[1])
     return new_date_iso
