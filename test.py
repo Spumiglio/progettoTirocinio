@@ -1,8 +1,11 @@
+import datetime
+
 import pandas as pd
 import statsmodels
 import matplotlib.pyplot as plt
 import numpy as np
 from datetime import *
+from datetime import timedelta
 
 
 def best20color(dativendita):
@@ -34,18 +37,21 @@ def datetoweek(dativendita):
 
 
 def weeksdistrubution(dativendita):
-    timeseries = pd.DataFrame(index=dativendita["settimana"])
+    val = []
     venditetemp = {}
     for row in dativendita.itertuples():
         for i in range(0, 12):
-            print(datetime.fromisoformat(row["settimana"]))
-            '''if row["settimana"] in venditetemp.keys():
-                venditetemp[datetime.fromisoformat(row["settimana"])+i] += row[str(i)]
+            data = datetime.fromisoformat(row[16])
+            week = str(data.isocalendar()[0]) + "-W" + str(data.isocalendar()[1]+i)
+            if week in venditetemp.keys():
+                venditetemp[week] += row[i+3]
             else:
-                venditetemp[datetime.fromisoformat(row["settimana"])+i] = row[str(i)]'''
+                venditetemp[week] = row[i + 3]
 
-    # timeseries.insert(1,"vendite",questobuisognatrovaerlo,allow_duplicates=True)
+    for key in list(venditetemp.keys()):
+        val.append(venditetemp[key])
 
+    timeseries = pd.DataFrame(data=val,index=list(venditetemp.keys()))
     return timeseries
 
 
