@@ -1,4 +1,7 @@
 import datetime
+import re
+
+from regex import *
 
 import pandas as pd
 import statsmodels
@@ -55,6 +58,13 @@ def weeksdistrubution(dativendita):
     timeseries.insert(0, "valore", val, allow_duplicates=True)
     return timeseries
 
+
+def addWeek(date_string, weeks):
+    date_iso = datetime.strptime(date_string + '-1', "%Y-W%W-%w")
+    new_date = date_iso + timedelta(weeks=weeks)
+    new_date_iso = str(datetime.fromisoformat(new_date.isoformat()).isocalendar()[0]) + "-W" + \
+           str(datetime.fromisoformat(new_date.isoformat()).isocalendar()[1])
+    return new_date_iso
 
 def main():
     dativendita = pd.read_csv("students_dataset_attr.csv").sort_values(by=["giorno_uscita"])
