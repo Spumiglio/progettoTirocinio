@@ -51,7 +51,8 @@ def weeksdistrubution(dativendita):
     for key in list(venditetemp.keys()):
         val.append(venditetemp[key])
 
-    timeseries = pd.DataFrame(data=val,index=list(venditetemp.keys()))
+    timeseries = pd.DataFrame(index=list(venditetemp.keys()))
+    timeseries.insert(0, "valore", val, allow_duplicates=True)
     return timeseries
 
 
