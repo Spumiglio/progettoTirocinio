@@ -42,20 +42,31 @@ def datetoweek(dativendita):
 def weeksdistrubution(dativendita):
     val = []
     venditetemp = {}
+    count=1
     for row in dativendita.itertuples():
+        count = 1
         for i in range(0, 12):
             data = datetime.fromisoformat(row[16])
-            week = str(data.isocalendar()[0]) + "-W" + str(data.isocalendar()[1]+i)
-            if week in venditetemp.keys():
-                venditetemp[week] += row[i+3]
+            if data.isocalendar()[1]+i > 52:
+                week = str(data.isocalendar()[0]) + "-W" + str(count)
+                count +=1
+                if week in venditetemp.keys():
+                    venditetemp[week] += row[i + 3]
+                else:
+                    venditetemp[week] = row[i + 3]
             else:
-                venditetemp[week] = row[i + 3]
+                week = str(data.isocalendar()[0]) + "-W" + str(data.isocalendar()[1]+i)
+                if week in venditetemp.keys():
+                    venditetemp[week] += row[i+3]
+                else:
+                    venditetemp[week] = row[i + 3]
+
 
     for key in list(venditetemp.keys()):
         val.append(venditetemp[key])
 
     timeseries = pd.DataFrame(index=list(venditetemp.keys()))
-    timeseries.insert(0, "valore", val, allow_duplicates=True)
+    timeseries.insert(0, "vendite", val, allow_duplicates=True)
     return timeseries
 
 
