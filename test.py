@@ -10,6 +10,11 @@ from datetime import *
 from datetime import timedelta
 
 
+def filter_by_color(df, color):
+    df = df[df['colore'] == color]
+    return df
+
+
 def best20color(dativendita):
     rag = dativendita.groupby(by="colore").sum().sort_values(by=["somma_vendite"], ascending=False).head(20)
     index = rag.index.to_series(index=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
@@ -41,12 +46,13 @@ def datetoweek(dativendita):
     dativendita.insert(14, "settimana", weekserie, allow_duplicates=True)
     return dativendita
 
+
 def weeksdistrubution(dativendita):
     val = []
     venditetemp = {}
     for row in dativendita.itertuples():
         for i in range(0, 12):
-            weekStr = addWeek(row[15],i)
+            weekStr = add_week(row[15], i)
             if weekStr in venditetemp.keys():
                     venditetemp[weekStr] += row[i+3]
             else:
@@ -58,7 +64,7 @@ def weeksdistrubution(dativendita):
     return timeseries
 
 
-def addWeek(date_string, weeks):
+def add_week(date_string, weeks):
     date_iso = dateutil.parser.isoparse(date_string)
     new_date = date_iso + timedelta(weeks=weeks)
     new_date_iso = str(datetime.fromisoformat(new_date.isoformat()).isocalendar()[0]) + "-W" + \
@@ -70,12 +76,21 @@ def main():
     dativendita = sommavendite(dativendita)
     best20color(dativendita)
     datetoweek(dativendita)
+    dativendita = filter_by_color(dativendita, "nero")
     weeksdistrubution(dativendita)
     best20colorlist(dativendita)
     # print(dativendita.head(5))
     '''plt.figure()
     dativendita.plot.area(x="giorno_uscita",y="somma_vendite",alpha=0.5)
     plt.show()'''
+
+    print("2020-W51: " + add_week("2020-W51", 1))
+    print("2020-W52: " + add_week("2020-W52", 1))
+    print("2020-W53: " + add_week("2020-W53", 1))
+    print("2021-W01: " + add_week("2021-W01", 1))
+    print("2019-W36: " + add_week("2019-W36", 1))
+    print("2016-W1: " + add_week("2016-W1", 1))
+    print("2016-W9: " + add_week("2016-W9", 1))
 
 
 if __name__ == '__main__':
