@@ -27,10 +27,12 @@ def best20color(dativendita):
     filtered = dativendita[dativendita.colore.isin(index)]
     return filtered
 
+
 def best20colorlist(dativendita):
     rag = dativendita.groupby(by="colore").sum().sort_values(by=["somma_vendite"], ascending=False).head(20)
     list = rag.index.values.tolist()
     return list
+
 
 def sommavendite(dativendita):
     somma_vendite = dativendita["0"] + dativendita["1"] + dativendita["2"] + dativendita["3"] + \
@@ -60,9 +62,9 @@ def weeksdistrubution(dativendita):
         for i in range(0, 12):
             weekStr = add_week(row[15], i)
             if weekStr in venditetemp.keys():
-                    venditetemp[weekStr] += row[i+3]
+                venditetemp[weekStr] += row[i + 3]
             else:
-                    venditetemp[weekStr] = row[i + 3]
+                venditetemp[weekStr] = row[i + 3]
     for key in list(venditetemp.keys()):
         val.append(venditetemp[key])
     timeseries = pd.DataFrame(index=list(venditetemp.keys()))
@@ -74,16 +76,33 @@ def add_week(date_string, weeks):
     date_iso = dateutil.parser.isoparse(date_string)
     new_date = date_iso + timedelta(weeks=weeks)
     new_date_iso = str(datetime.fromisoformat(new_date.isoformat()).isocalendar()[0]) + "-W" + \
-           str(datetime.fromisoformat(new_date.isoformat()).isocalendar()[1])
+                   str(datetime.fromisoformat(new_date.isoformat()).isocalendar()[1])
     return new_date_iso
+
+
+# type_of_plot puo' essere H = istogramma, B = barre, L = lineare
+def plot_dataframe(df, type_of_plot="L", plot_name="Vendite totali"):
+    if type_of_plot == "L":
+        x = df.index
+        y = df['vendite']
+        plt.plot(x, y)
+        plt.xlabel("Settimane")
+        plt.ylabel("Totale vendite")
+        plt.title(plot_name)
+        plt.show()
 
 def main():
     dativendita = pd.read_csv("students_dataset_attr.csv").sort_values(by=["giorno_uscita"])
     dativendita = sommavendite(dativendita)
     best20color(dativendita)
     datetoweek(dativendita)
-    weeksdistrubution(dativendita)
+    dativendita = filter_by_color(dativendita, "nero")
+    dativendita_colore = weeksdistrubution(dativendita)
     dflist = dataframelist(dativendita)
+
+    # plotting
+    plot_dataframe(dativendita_colore)
+
 
 if __name__ == '__main__':
     main()
