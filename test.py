@@ -59,6 +59,7 @@ def weeksdistrubution(dativendita):
                 else:
                     venditetemp[weekStr] = row[i + 3]
 
+
     for key in list(venditetemp.keys()):
         val.append(venditetemp[key])
 
