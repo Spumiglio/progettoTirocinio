@@ -14,6 +14,12 @@ def filter_by_color(df, color):
     df = df[df['colore'] == color]
     return df
 
+def dataframelist(df):
+    dflist=[]
+    colorlist=best20colorlist(df)
+    for color in colorlist:
+        dflist.append(filter_by_color(df, color))
+    return dflist
 
 def best20color(dativendita):
     rag = dativendita.groupby(by="colore").sum().sort_values(by=["somma_vendite"], ascending=False).head(20)
@@ -76,22 +82,8 @@ def main():
     dativendita = sommavendite(dativendita)
     best20color(dativendita)
     datetoweek(dativendita)
-    dativendita = filter_by_color(dativendita, "nero")
     weeksdistrubution(dativendita)
-    best20colorlist(dativendita)
-    # print(dativendita.head(5))
-    '''plt.figure()
-    dativendita.plot.area(x="giorno_uscita",y="somma_vendite",alpha=0.5)
-    plt.show()'''
-
-    print("2020-W51: " + add_week("2020-W51", 1))
-    print("2020-W52: " + add_week("2020-W52", 1))
-    print("2020-W53: " + add_week("2020-W53", 1))
-    print("2021-W01: " + add_week("2021-W01", 1))
-    print("2019-W36: " + add_week("2019-W36", 1))
-    print("2016-W1: " + add_week("2016-W1", 1))
-    print("2016-W9: " + add_week("2016-W9", 1))
-
+    dflist = dataframelist(dativendita)
 
 if __name__ == '__main__':
     main()
