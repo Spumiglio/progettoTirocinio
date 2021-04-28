@@ -1,4 +1,6 @@
 import datetime
+import dateutil
+
 import pandas as pd
 import statsmodels
 import matplotlib.pyplot as plt
@@ -87,10 +89,8 @@ def weeksdistrubution2(dativendita):
     return timeseries
 
 
-
-
 def addWeek(date_string, weeks):
-    date_iso = datetime.strptime(date_string + '-1', "%Y-W%W-%w")
+    date_iso = dateutil.parser.isoparse(date_string)
     new_date = date_iso + timedelta(weeks=weeks)
     new_date_iso = str(datetime.fromisoformat(new_date.isoformat()).isocalendar()[0]) + "-W" + \
            str(datetime.fromisoformat(new_date.isoformat()).isocalendar()[1])
@@ -106,6 +106,14 @@ def main():
     '''plt.figure()
     dativendita.plot.area(x="giorno_uscita",y="somma_vendite",alpha=0.5)
     plt.show()'''
+
+    print("2020-W51: " + addWeek("2020-W51", 1))
+    print("2020-W52: " + addWeek("2020-W52", 1))
+    print("2020-W53: " + addWeek("2020-W53", 1))
+    print("2021-W01: " + addWeek("2021-W01", 1))
+    print("2019-W36: " + addWeek("2019-W36", 1))
+    print("2016-W1: " + addWeek("2016-W1", 1))
+    print("2016-W9: " + addWeek("2016-W9", 1))
 
 
 if __name__ == '__main__':
