@@ -96,12 +96,15 @@ def main():
     dativendita = sommavendite(dativendita)
     best20color(dativendita)
     datetoweek(dativendita)
-    dativendita = filter_by_color(dativendita, "nero")
+
     dativendita_colore = weeksdistrubution(dativendita)
     dflist = dataframelist(dativendita)
 
-    # plotting
-    plot_dataframe(dativendita_colore)
+
+    for df in dflist:
+        df_col=weeksdistrubution(df)
+        # plotting
+        plot_dataframe(df_col,plot_name=df.iloc[0,16])
 
 
 if __name__ == '__main__':
