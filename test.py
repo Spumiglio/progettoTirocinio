@@ -1,6 +1,7 @@
 import datetime
-import dateutil
 
+import dateutil
+from dateutil import parser
 import pandas as pd
 import statsmodels
 import matplotlib.pyplot as plt
@@ -15,6 +16,10 @@ def best20color(dativendita):
     filtered = dativendita[dativendita.colore.isin(index)]
     return filtered
 
+def best20colorlist(dativendita):
+    rag = dativendita.groupby(by="colore").sum().sort_values(by=["somma_vendite"], ascending=False).head(20)
+    list = rag.index.values.tolist()
+    return list
 
 def sommavendite(dativendita):
     somma_vendite = dativendita["0"] + dativendita["1"] + dativendita["2"] + dativendita["3"] + \
@@ -36,43 +41,9 @@ def datetoweek(dativendita):
     dativendita.insert(14, "settimana", weekserie, allow_duplicates=True)
     return dativendita
 
-
 def weeksdistrubution(dativendita):
     val = []
     venditetemp = {}
-    count=1
-    for row in dativendita.itertuples():
-        count = 1
-        for i in range(0, 12):
-            data = datetime.fromisoformat(row[16])
-            if data.isocalendar()[1]+i > 52:
-                weekStr = str(data.isocalendar()[0]+1) + "-W" + str(count)
-
-                count +=1
-                if weekStr in venditetemp.keys():
-                    venditetemp[weekStr] += row[i + 3]
-                else:
-                    venditetemp[weekStr] = row[i + 3]
-            else:
-                weekStr = str(data.isocalendar()[0]) + "-W" + str(data.isocalendar()[1]+i)
-
-                if weekStr in venditetemp.keys():
-                    venditetemp[weekStr] += row[i+3]
-                else:
-                    venditetemp[weekStr] = row[i + 3]
-
-
-    for key in list(venditetemp.keys()):
-        val.append(venditetemp[key])
-
-    timeseries = pd.DataFrame(index=list(venditetemp.keys()))
-    timeseries.insert(0, "vendite", val, allow_duplicates=True)
-    return timeseries
-
-def weeksdistrubution2(dativendita):
-    val = []
-    venditetemp = {}
-
     for row in dativendita.itertuples():
         for i in range(0, 12):
             weekStr = addWeek(row[15],i)
@@ -80,10 +51,8 @@ def weeksdistrubution2(dativendita):
                     venditetemp[weekStr] += row[i+3]
             else:
                     venditetemp[weekStr] = row[i + 3]
-
     for key in list(venditetemp.keys()):
         val.append(venditetemp[key])
-
     timeseries = pd.DataFrame(index=list(venditetemp.keys()))
     timeseries.insert(0, "vendite", val, allow_duplicates=True)
     return timeseries
@@ -102,18 +71,11 @@ def main():
     best20color(dativendita)
     datetoweek(dativendita)
     weeksdistrubution(dativendita)
+    best20colorlist(dativendita)
     # print(dativendita.head(5))
     '''plt.figure()
     dativendita.plot.area(x="giorno_uscita",y="somma_vendite",alpha=0.5)
     plt.show()'''
-
-    print("2020-W51: " + addWeek("2020-W51", 1))
-    print("2020-W52: " + addWeek("2020-W52", 1))
-    print("2020-W53: " + addWeek("2020-W53", 1))
-    print("2021-W01: " + addWeek("2021-W01", 1))
-    print("2019-W36: " + addWeek("2019-W36", 1))
-    print("2016-W1: " + addWeek("2016-W1", 1))
-    print("2016-W9: " + addWeek("2016-W9", 1))
 
 
 if __name__ == '__main__':
