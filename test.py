@@ -44,7 +44,8 @@ def weeksdistrubution(dativendita):
         for i in range(0, 12):
             data = datetime.fromisoformat(row[16])
             if data.isocalendar()[1]+i > 52:
-                weekStr = str(data.isocalendar()[0]) + "-W" + str(count)
+                weekStr = str(data.isocalendar()[0]+1) + "-W" + str(count)
+
                 count +=1
                 if weekStr in venditetemp.keys():
                     venditetemp[weekStr] += row[i + 3]
@@ -52,6 +53,7 @@ def weeksdistrubution(dativendita):
                     venditetemp[weekStr] = row[i + 3]
             else:
                 weekStr = str(data.isocalendar()[0]) + "-W" + str(data.isocalendar()[1]+i)
+
                 if weekStr in venditetemp.keys():
                     venditetemp[weekStr] += row[i+3]
                 else:
@@ -88,7 +90,7 @@ def weeksdistrubution2(dativendita):
 
 def addWeek(date_string, weeks):
     date_iso = datetime.strptime(date_string + '-1', "%Y-W%W-%w")
-    new_date = date_iso + timedelta(weeks=weeks-1)
+    new_date = date_iso + timedelta(weeks=weeks)
     new_date_iso = str(datetime.fromisoformat(new_date.isoformat()).isocalendar()[0]) + "-W" + \
            str(datetime.fromisoformat(new_date.isoformat()).isocalendar()[1])
     return new_date_iso
