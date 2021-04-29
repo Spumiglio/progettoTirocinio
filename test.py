@@ -103,8 +103,6 @@ def average_forecasting(series_to_forecast, last_week):
     return add_week(last_week, 1), avg
 
 
-
-
 def driftmethod(df):
     y_t = df.loc[df.index[len(df) - 1]]['vendite']
     m = (y_t - df.loc[df.index[0]]['vendite']) / len(df)
@@ -136,11 +134,6 @@ def main():
         df.loc[forecast_date] = forecast_value
     plot_dataframe(df, plot_name="Naive")
 
-    # plot_dataframe(dativendita_colore)
-    # for df in dflist:
-    #     df_col=weeksdistrubution(df)
-    #     plotting
-        # plot_dataframe(df_col,plot_name=df.iloc[0,16])
     for df in dflist:
         df_col=weeksdistrubution(df)
         # plotting
