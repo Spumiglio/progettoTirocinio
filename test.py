@@ -91,12 +91,23 @@ def plot_dataframe(df, type_of_plot="L", plot_name="Vendite totali"):
         plt.title(plot_name)
         plt.show()
 
+def naive(df):
+    for i in range(0, 12):
+        valcoda = df.tail(1)
+        val = valcoda["vendite"].values[0]
+        index = valcoda.index.values[0]
+        newweek= add_week(index,1)
+        df2=pd.Series({'vendite':val}, name=newweek)
+        df = df.append(df2)
+    return df
+
+
 def main():
     dativendita = pd.read_csv("students_dataset_attr.csv").sort_values(by=["giorno_uscita"])
     dativendita = sommavendite(dativendita)
     best20color(dativendita)
     datetoweek(dativendita)
-
+    naive(weeksdistrubution(dativendita))
     dativendita_colore = weeksdistrubution(dativendita)
     dflist = dataframelist(dativendita)
 
