@@ -1,13 +1,14 @@
 import datetime
 
 import dateutil
-
+from dateutil import parser
 import pandas as pd
 import statsmodels
 import matplotlib.pyplot as plt
 import numpy as np
 
 from datetime import *
+from datetime import timedelta
 
 
 def filter_by_color(df, color):
@@ -91,21 +92,17 @@ def plot_dataframe(df, type_of_plot="L", plot_name="Vendite totali"):
         plt.title(plot_name)
         plt.show()
 
-def naive(df):
-    for i in range(0, 12):
-        valcoda = df.tail(1)
-        val = valcoda["vendite"].values[0]
-        index = valcoda.index.values[0]
-        newweek= add_week(index,1)
-        df2=pd.Series({'vendite':val}, name=newweek)
-        df = df.append(df2)
-    return df
+def naive(series_to_forecast, week_to_forecast):
+    return  add_week(week_to_forecast,1), series_to_forecast.tail(1).values[0]
 
 
 
-def average_forecasting(series_to_forecast, week_to_forecast):
+
+def average_forecasting(series_to_forecast, last_week):
     avg = int(series_to_forecast.mean())
-    return add_week(week_to_forecast, 1), avg
+    return add_week(last_week, 1), avg
+
+
 
 
 def driftmethod(df):
@@ -131,11 +128,23 @@ def main():
     for i in range(0, 12):
         forecast_date, forecast_value = average_forecasting(dativendita_colore['vendite'], dativendita_colore.index[dativendita_colore.index.size-1])
         dativendita_colore.loc[forecast_date] = forecast_value
+
+    #  Naive
+    df = weeksdistrubution(dativendita)
+    for i in range(0, 12):
+        forecast_date, forecast_value = naive(df['vendite'], df.index[df.index.size - 1])
+        df.loc[forecast_date] = forecast_value
+    plot_dataframe(df, plot_name="Naive")
+
     # plot_dataframe(dativendita_colore)
     # for df in dflist:
     #     df_col=weeksdistrubution(df)
     #     plotting
         # plot_dataframe(df_col,plot_name=df.iloc[0,16])
+    for df in dflist:
+        df_col=weeksdistrubution(df)
+        # plotting
+        plot_dataframe(df_col,plot_name=df.iloc[0,16])
 
     #testing drift
     for i in range(0,12):
