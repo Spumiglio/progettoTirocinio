@@ -102,6 +102,12 @@ def naive(df):
     return df
 
 
+
+def average_forecasting(series_to_forecast, week_to_forecast):
+    avg = int(series_to_forecast.mean())
+    return add_week(week_to_forecast, 1), avg
+
+
 def main():
     dativendita = pd.read_csv("students_dataset_attr.csv").sort_values(by=["giorno_uscita"])
     dativendita = sommavendite(dativendita)
@@ -111,6 +117,11 @@ def main():
     dativendita_colore = weeksdistrubution(dativendita)
     dflist = dataframelist(dativendita)
 
+    # testing average
+    for i in range(0, 12):
+        forecast_date, forecast_value = average_forecasting(dativendita_colore['vendite'], dativendita_colore.index[dativendita_colore.index.size-1])
+        dativendita_colore.loc[forecast_date] = forecast_value
+    # plot_dataframe(dativendita_colore)
 
     for df in dflist:
         df_col=weeksdistrubution(df)
