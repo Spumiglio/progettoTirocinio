@@ -1,5 +1,4 @@
 import datetime
-
 import dateutil
 from dateutil import parser
 import pandas as pd
@@ -66,6 +65,8 @@ def weeksdistrubution(dativendita):
                 venditetemp[weekStr] += row[i + 3]
             else:
                 venditetemp[weekStr] = row[i + 3]
+    for i in range(0, 11):
+        venditetemp.popitem()
     for key in list(venditetemp.keys()):
         val.append(venditetemp[key])
     timeseries = pd.DataFrame(index=list(venditetemp.keys()))
@@ -92,10 +93,9 @@ def plot_dataframe(df, type_of_plot="L", plot_name="Vendite totali"):
         plt.title(plot_name)
         plt.show()
 
+
 def naive(series_to_forecast, week_to_forecast):
     return  add_week(week_to_forecast,1), series_to_forecast.tail(1).values[0]
-
-
 
 
 def average_forecasting(series_to_forecast, last_week):
