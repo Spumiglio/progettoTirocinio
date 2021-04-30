@@ -1,5 +1,6 @@
 from dataPreparation import *
 from statsmodels.tsa.holtwinters import SimpleExpSmoothing
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
 def smpExpSmoth(df):
     model = SimpleExpSmoothing(df)
@@ -34,3 +35,12 @@ def average_forecasting(series_to_forecast, week_to_forecast):
 def seasonal_naive_forecasting(series_to_forecast, week_to_forecast, season_length, h):
     k = int((h - 1) / season_length)
     return add_week(week_to_forecast, 1), series_to_forecast[series_to_forecast.size + h - season_length * (k + 1)]
+
+def seasonalExp_smoothing(df,weektopredict=1):
+    model = ExponentialSmoothing(df, seasonal_periods=4, seasonal='add', use_boxcox=False, initialization_method="estimated").fit()
+    predict = model.forecast(weektopredict)
+    week = df.index[df.index.size - 1]
+    for i in range(0, weektopredict):
+        week = add_week(week, 1)
+        df.loc[week] = predict.iloc[i]
+    return df
