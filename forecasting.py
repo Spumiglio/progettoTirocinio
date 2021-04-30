@@ -1,14 +1,22 @@
+import pandas as pd
+from dateutil import parser
 from dataPreparation import *
 from statsmodels.tsa.holtwinters import SimpleExpSmoothing
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
-def smpExpSmoth(df):
-    model = SimpleExpSmoothing(df)
-    model_fit= model.fit(smoothing_level=0.6, optimized=False)
-    predict= model_fit.forecast(3)
-    week=df.index[df.index.size - 1]
-    for i in range(0,3):
-        week=add_week(week,1)
+
+def smpExpSmoth(df, num_of_forcast):
+    dateiso = []
+    for week in df.index:
+        dateiso.append(dateutil.parser.isoparse(week))
+    dateiso = pd.DatetimeIndex(dateiso).to_period('W')
+    newse = pd.Series(data=df['vendite'].values, index=dateiso)
+    model = SimpleExpSmoothing(newse, initialization_method='estimated')
+    model_fit = model.fit(smoothing_level=0.6, optimized=False)
+    predict = model_fit.forecast(num_of_forcast)
+    week = df.index[df.index.size - 1]
+    for i in range(0, num_of_forcast):
+        week = add_week(week, 1)
         df.loc[week] = predict.iloc[i]
     return df
 
@@ -37,7 +45,12 @@ def seasonal_naive_forecasting(series_to_forecast, week_to_forecast, season_leng
     return add_week(week_to_forecast, 1), series_to_forecast[series_to_forecast.size + h - season_length * (k + 1)]
 
 def seasonalExp_smoothing(df,weektopredict=1):
-    model = ExponentialSmoothing(df, seasonal_periods=4, seasonal='add', use_boxcox=False, initialization_method="estimated").fit()
+    dateiso = []
+    for week in df.index:
+        dateiso.append(dateutil.parser.isoparse(week))
+    dateiso = pd.DatetimeIndex(dateiso).to_period('W')
+    series = pd.Series(data=df['vendite'].values, index=dateiso)
+    model = ExponentialSmoothing(series, seasonal_periods=4, seasonal='add', use_boxcox=False, initialization_method="estimated").fit()
     predict = model.forecast(weektopredict)
     week = df.index[df.index.size - 1]
     for i in range(0, weektopredict):
