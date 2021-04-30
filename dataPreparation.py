@@ -1,11 +1,5 @@
-import datetime
-import dateutil
-from dateutil import parser
-import pandas as pd
-import statsmodels
-import matplotlib.pyplot as plt
-import numpy as np
 
+from forecasting import *
 from datetime import *
 from datetime import timedelta
 
