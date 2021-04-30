@@ -46,7 +46,8 @@ def main():
     # testing drift
     for i in range(0, 12):
         newdf = driftmethod(df_col)
-    plot_dataframe(newdf)
+    plot_dataframe(newdf, plot_name="Drift")
+
 
 
 if __name__ == '__main__':
