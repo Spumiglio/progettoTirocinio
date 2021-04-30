@@ -9,8 +9,8 @@ def driftmethod(df):
     m = (y_t - df.loc[df.index[0]]['vendite']) / len(df)
     h = 1
     valforecast = y_t + m * h
-    new_week= add_week(df.index[len(df) - 1],1)
-    df.loc[new_week]=valforecast
+    new_week = add_week(df.index[len(df) - 1],1)
+    df.loc[new_week] = valforecast
     return df
 
 
