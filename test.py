@@ -13,7 +13,7 @@ def main():
 
     # simpleExpSmothing
     for i in range(0, 12):
-        smpExpsmoth(df_col)
+        smpExpSmoth(df_col)
     plot_dataframe(df_col, plot_name='simpleExpSmothing')
 
 

@@ -6,9 +6,10 @@ def smpExpSmoth(df):
     model_fit= model.fit(smoothing_level=0.6, optimized=False)
     predict= model_fit.forecast(3)
     week=df.index[df.index.size - 1]
-    df.loc[week] = predict
+    for i in range(0,3):
+        week=add_week(week,1)
+        df.loc[week] = predict.iloc[i]
     return df
-    print(1)
 
 
 def naive(series_to_forecast, week_to_forecast):
