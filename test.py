@@ -1,6 +1,8 @@
 from forecasting import *
 from plotter import *
+from evaluation import *
 import pandas as pd
+
 
 def main():
     dativendita = pd.read_csv("students_dataset_attr.csv").sort_values(by=["giorno_uscita"])
@@ -28,6 +30,7 @@ def main():
         dativendita_colore.loc[forecast_date] = forecast_value
     # plot_dataframe(dativendita_colore)
     plot_dataframe(dativendita_colore,dativendita_colore_test, plot_name="Average", forecasting_indexes=forecast_index)
+    print("Average MASE: " + str(mase(dativendita_colore['vendite'], dativendita_colore_test['vendite'])))
 
     dativendita_colore = weeksdistrubution(train)
     # testing seasonal naive
@@ -37,6 +40,7 @@ def main():
         dativendita_colore.loc[forecast_date] = forecast_value
     # plot_dataframe(dativendita_colore)
     plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name="Seasonal Naive", forecasting_indexes=forecast_index)
+    print("Seasonal Naive MASE: " + str(mase(dativendita_colore['vendite'], dativendita_colore_test['vendite'])))
 
     #  Naive
     dativendita_colore = weeksdistrubution(train)
@@ -45,22 +49,26 @@ def main():
         dativendita_colore.loc[forecast_date] = forecast_value
     # plot_dataframe(df, plot_name="Naive")
     plot_dataframe(dativendita_colore,dativendita_colore_test, plot_name="Naive", forecasting_indexes=forecast_index)
+    print("Naive MASE: " + str(mase(dativendita_colore['vendite'], dativendita_colore_test['vendite'])))
 
     # testing drift
     dativendita_colore = weeksdistrubution(train)
     for i in range(0, 27):
         newdf = driftmethod(dativendita_colore)
     plot_dataframe(newdf, dativendita_colore_test, plot_name="Drift", forecasting_indexes=forecast_index)
+    print("Drift MASE: " + str(mase(dativendita_colore['vendite'], dativendita_colore_test['vendite'])))
 
     dativendita_colore = weeksdistrubution(train)
     # testing seasonalexpsmooth
     modelo = seasonalExp_smoothing(dativendita_colore,27)
     plot_dataframe(modelo,dativendita_colore_test, plot_name="HoltWinter", forecasting_indexes=forecast_index)
+    print("ETS MASE: " + str(mase(dativendita_colore['vendite'], dativendita_colore_test['vendite'])))
 
     dativendita_colore = weeksdistrubution(train)
     # testing simpleExpSmothing
     smpExpSmoth(dativendita_colore, 27)
     plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name='simpleExpSmothing', forecasting_indexes=forecast_index)
+    print("Simple ETS MASE: " + str(mase(dativendita_colore['vendite'], dativendita_colore_test['vendite'])))
 
 
 if __name__ == '__main__':

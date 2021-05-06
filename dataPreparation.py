@@ -85,20 +85,20 @@ def datasplitter(dativendita, testsize=0.2):
     return train, test
 
 
-def box_cox_transformation(series, lambda_num, reverse=False):
-    for index in series.index:
+def box_cox_transformation(df, lambda_num, reverse=False):
+    for index in df.index:
         if not reverse:
             if lambda_num == 0:
-                series[index] = log(series[index])
+                df.loc[index] = log(df.loc[index])
             else:
-                series[index] = np.sign(series[index]) * ((abs(series[index])**lambda_num - 1) / lambda_num)
+                df.loc[index] = np.sign(df.loc[index]) * ((abs(df.loc[index])**lambda_num - 1) / lambda_num)
         else:
             if lambda_num == 0:
-                series[index] = exp(series[index])
+                df.loc[index] = exp(df.loc[index])
             else:
-                series[index] = np.sign(lambda_num * series[index] + 1) * (abs(lambda_num * series[index] + 1)**(1/lambda_num))
+                df.loc[index] = np.sign(lambda_num * df.loc[index] + 1) * (abs(lambda_num * df.loc[index] + 1)**(1/lambda_num))
 
-    return series
+    return df
 
 
 
