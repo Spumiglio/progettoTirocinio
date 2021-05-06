@@ -4,6 +4,8 @@ from datetime import *
 from datetime import timedelta
 import dateutil
 import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
 
 
 def filter_by_color(df, color):
@@ -77,6 +79,9 @@ def add_week(date_string, weeks):
                    str(datetime.fromisoformat(new_date.isoformat()).isocalendar()[1])
     return new_date_iso
 
+def datasplitter(dativendita, testsize=0.2):
+    train, test = train_test_split(dativendita, test_size=testsize, random_state=42, shuffle=False)
+    return train, test
 
 
 
