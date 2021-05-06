@@ -1,4 +1,5 @@
-
+from math import log
+from math import exp
 from forecasting import *
 from datetime import *
 from datetime import timedelta
@@ -83,6 +84,21 @@ def datasplitter(dativendita, testsize=0.2):
     train, test = train_test_split(dativendita, test_size=testsize, random_state=42, shuffle=False)
     return train, test
 
+
+def box_cox_transformation(series, lambda_num, reverse=False):
+    for index in series.index:
+        if not reverse:
+            if lambda_num == 0:
+                series[index] = log(series[index])
+            else:
+                series[index] = np.sign(series[index]) * ((abs(series[index])**lambda_num - 1) / lambda_num)
+        else:
+            if lambda_num == 0:
+                series[index] = exp(series[index])
+            else:
+                series[index] = np.sign(lambda_num * series[index] + 1) * (abs(lambda_num * series[index] + 1)**(1/lambda_num))
+
+    return series
 
 
 
