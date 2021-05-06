@@ -1,5 +1,6 @@
 import pandas as pd
 from statistics import mean
+from statistics import stdev
 from math import sqrt
 
 
@@ -48,3 +49,8 @@ def diff_val(series, lag=1):
     for t in range(lag, len(series)):
         summ += abs(series[t] - series[t-lag])
     return summ
+
+
+def prediction_interval(forecast_series, c=95):
+    c_s = {80: 1.28, 85: 1.44, 90: 1.64, 95: 1.96, 96: 2.05, 97: 2.17, 98: 2.33, 99: 2.58}
+    return forecast_series - (c * stdev(forecast_series)), forecast_series + (c * stdev(forecast_series))
