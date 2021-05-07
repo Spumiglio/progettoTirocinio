@@ -9,19 +9,18 @@ def main():
     dativendita = sommavendite(dativendita)
     best20color(dativendita)
     datetoweek(dativendita)
+
+    # dativendita_nero = filter_by_color(dativendita, 'fantasia')
+
     train, test = datasplitter(dativendita)
+    print("test")
+
     dativendita_colore = weeksdistrubution(train)
-    dflist = dataframelist(train)
-    df_col = weeksdistrubution(dflist[0])
+
 
     dativendita_colore_test = weeksdistrubution(test)
     forecast_index = dativendita_colore.index.size - 1
     # plot_dataframe(test_col, plot_name="Test")
-
-    for df in dflist:
-        df_col = weeksdistrubution(df)
-        # plotting
-        # plot_dataframe(df_col, plot_name=df.iloc[0, 16])
 
     # testing average
     for i in range(0, 27):
@@ -66,8 +65,8 @@ def main():
 
     dativendita_colore = weeksdistrubution(train)
     # testing simpleExpSmothing
-    smpExpSmoth(dativendita_colore, 27)
-    plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name='simpleExpSmothing', forecasting_indexes=forecast_index)
+    forecasted = smpExpSmoth(dativendita_colore, 27)
+    plot_dataframe(forecasted, dativendita_colore_test, plot_name='simpleExpSmothing', forecasting_indexes=forecast_index)
     print("Simple ETS MASE: " + str(mase(dativendita_colore['vendite'], dativendita_colore_test['vendite'])))
 
 
