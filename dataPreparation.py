@@ -1,17 +1,16 @@
 from math import log
 from math import exp
-import datetime
-import dateutil
-from dateutil import parser
-from plotter import *
-import pandas as pd
 from forecasting import *
 from datetime import *
 from datetime import timedelta
+
 import dateutil
-import pandas as pd
 import numpy as np
+import pandas as pd
+from math import log, exp
 from sklearn.model_selection import train_test_split
+
+from forecasting import *
 
 
 def filter_by_color(df, color):
@@ -34,8 +33,8 @@ def best20color(dativendita):
 
 def best20colorlist(dativendita):
     rag = dativendita.groupby(by="colore").sum().sort_values(by=["somma_vendite"], ascending=False).head(20)
-    color_list = rag.index.values.tolist()
-    return color_list
+    list = rag.index.values.tolist()
+    return list
 
 
 def sommavendite(dativendita):
@@ -64,11 +63,11 @@ def weeksdistrubution(dativendita):
     venditetemp = {}
     for row in dativendita.itertuples():
         for i in range(0, 12):
-            week_str = add_week(row[15], i)
-            if week_str in venditetemp.keys():
-                venditetemp[week_str] += row[i + 3]
+            weekStr = add_week(row[15], i)
+            if weekStr in venditetemp.keys():
+                venditetemp[weekStr] += row[i + 3]
             else:
-                venditetemp[week_str] = row[i + 3]
+                venditetemp[weekStr] = row[i + 3]
     for i in range(0, 11):
         venditetemp.popitem()
     for key in list(venditetemp.keys()):
@@ -84,6 +83,7 @@ def add_week(date_string, weeks):
     new_date_iso = str(datetime.fromisoformat(new_date.isoformat()).isocalendar()[0]) + "-W" + \
                    str(datetime.fromisoformat(new_date.isoformat()).isocalendar()[1])
     return new_date_iso
+
 
 def datasplitter(dativendita, testsize=0.2):
     train, test = train_test_split(dativendita, test_size=testsize, random_state=42, shuffle=False)

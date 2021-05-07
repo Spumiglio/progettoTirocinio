@@ -53,10 +53,8 @@ def seasonalExp_smoothing(df, weektopredict=1):
         dateiso.append(dateutil.parser.isoparse(week))
     dateiso = pd.DatetimeIndex(dateiso).to_period('W')
     series = pd.Series(data=df['vendite'].values, index=dateiso)
-    model = ExponentialSmoothing(series, seasonal_periods=26, seasonal='mul', use_boxcox=False,
-                                 initialization_method="estimated")  # se use_boxcox= true non c'e' ConvergenceWarning
-    fit = model.fit()
-    predict = fit.forecast(weektopredict)
+    model = ExponentialSmoothing(series, seasonal_periods=26, seasonal='add', initialization_method="estimated").fit()
+    predict = model.forecast(weektopredict)
     week = df.index[df.index.size - 1]
     for i in range(0, weektopredict):
         week = add_week(week, 1)
