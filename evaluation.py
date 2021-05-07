@@ -186,8 +186,8 @@ def score_model(data, n_test, cfg):
             result = walk_forward_validation(data, n_test, cfg)
     except:
         error = None
-    if result is not None:
-        print(' > Model[%s] %.3f' % (key, result))
+    # if result is not None:
+    #     print(' > Model[%s] %.3f' % (key, result))
     return key, result
 
 
