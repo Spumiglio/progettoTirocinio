@@ -19,11 +19,9 @@ def main():
     dativendita_colore_test = weeksdistrubution(test)
     forecast_index = dativendita_colore.index.size - 1
 
-
-    # Average
     print('Best method: ' + evaluate_simple_forecasts(dativendita_colore, dativendita_colore_test, 'vendite', season=25))
+    # Average
 
-    # testing average
     for i in range(0, 27):
         week_to_forecast = dativendita_colore.index[dativendita_colore.index.size - 1]
         forecast_date, forecast_value = average_forecasting(dativendita_colore['vendite'], week_to_forecast)
