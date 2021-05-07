@@ -10,7 +10,7 @@ def main():
     dativendita = best20color(dativendita)
     datetoweek(dativendita)
 
-    # dativendita_nero = filter_by_color(dativendita, 'fantasia')
+    dativendita = filter_by_color(dativendita, 'jeans')
 
     train, test = datasplitter(dativendita)
 
@@ -21,7 +21,6 @@ def main():
                       end=dativendita_colore.index[len(dativendita_colore.index) - 1], fill_mode='A')
     fill_missing_data(dativendita_colore_test, start=dativendita_colore_test.index[0],
                       end=dativendita_colore_test.index[len(dativendita_colore_test.index) - 1], fill_mode='A')
-
 
     forecast_index = dativendita_colore.index.size - 1
 
