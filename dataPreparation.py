@@ -1,5 +1,10 @@
 from math import log
 from math import exp
+import datetime
+import dateutil
+from dateutil import parser
+from plotter import *
+import pandas as pd
 from forecasting import *
 from datetime import *
 from datetime import timedelta
@@ -14,8 +19,8 @@ def filter_by_color(df, color):
     return df
 
 def dataframelist(df):
-    dflist=[]
-    colorlist=best20colorlist(df)
+    dflist = []
+    colorlist = best20colorlist(df)
     for color in colorlist:
         dflist.append(filter_by_color(df, color))
     return dflist
@@ -29,8 +34,8 @@ def best20color(dativendita):
 
 def best20colorlist(dativendita):
     rag = dativendita.groupby(by="colore").sum().sort_values(by=["somma_vendite"], ascending=False).head(20)
-    list = rag.index.values.tolist()
-    return list
+    color_list = rag.index.values.tolist()
+    return color_list
 
 
 def sommavendite(dativendita):
@@ -59,11 +64,11 @@ def weeksdistrubution(dativendita):
     venditetemp = {}
     for row in dativendita.itertuples():
         for i in range(0, 12):
-            weekStr = add_week(row[15], i)
-            if weekStr in venditetemp.keys():
-                venditetemp[weekStr] += row[i + 3]
+            week_str = add_week(row[15], i)
+            if week_str in venditetemp.keys():
+                venditetemp[week_str] += row[i + 3]
             else:
-                venditetemp[weekStr] = row[i + 3]
+                venditetemp[week_str] = row[i + 3]
     for i in range(0, 11):
         venditetemp.popitem()
     for key in list(venditetemp.keys()):
