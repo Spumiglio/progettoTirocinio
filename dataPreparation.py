@@ -1,12 +1,13 @@
-from math import log
-from math import exp
-from forecasting import *
 from datetime import *
 from datetime import timedelta
+
 import dateutil
-import pandas as pd
 import numpy as np
+import pandas as pd
+from math import log, exp
 from sklearn.model_selection import train_test_split
+
+from forecasting import *
 
 
 def filter_by_color(df, color):
@@ -79,6 +80,7 @@ def add_week(date_string, weeks):
     new_date_iso = str(datetime.fromisoformat(new_date.isoformat()).isocalendar()[0]) + "-W" + \
                    str(datetime.fromisoformat(new_date.isoformat()).isocalendar()[1])
     return new_date_iso
+
 
 def datasplitter(dativendita, testsize=0.2):
     train, test = train_test_split(dativendita, test_size=testsize, random_state=42, shuffle=False)

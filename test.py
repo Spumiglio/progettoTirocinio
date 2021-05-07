@@ -7,7 +7,7 @@ import pandas as pd
 def main():
     dativendita = pd.read_csv("students_dataset_attr.csv").sort_values(by=["giorno_uscita"])
     dativendita = sommavendite(dativendita)
-    best20color(dativendita)
+    dativendita = best20color(dativendita)
     datetoweek(dativendita)
 
     # dativendita_nero = filter_by_color(dativendita, 'fantasia')
@@ -21,6 +21,9 @@ def main():
 
 
     # Average
+    print('Best method: ' + evaluate_simple_forecasts(dativendita_colore, dativendita_colore_test, 'vendite', season=25))
+
+    # testing average
     for i in range(0, 27):
         week_to_forecast = dativendita_colore.index[dativendita_colore.index.size - 1]
         forecast_date, forecast_value = average_forecasting(dativendita_colore['vendite'], week_to_forecast)
@@ -32,6 +35,7 @@ def main():
 
     # Seasonal Naive
     dativendita_colore = weeksdistrubution(train)
+    # testing seasonal naive
     for i in range(0, 27):
         week_to_forecast = dativendita_colore.index[dativendita_colore.index.size - 1]
         forecast_date, forecast_value = seasonal_naive_forecasting(dativendita_colore['vendite'], week_to_forecast, 26, 1)
