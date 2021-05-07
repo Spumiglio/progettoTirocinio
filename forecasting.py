@@ -43,13 +43,14 @@ def seasonal_naive_forecasting(series_to_forecast, week_to_forecast, season_leng
     k = int((h - 1) / season_length)
     return add_week(week_to_forecast, 1), series_to_forecast[series_to_forecast.size + h - season_length * (k + 1)]
 
-def seasonalExp_smoothing(df,weektopredict=1):
+
+def seasonalExp_smoothing(df, weektopredict=1):
     dateiso = []
     for week in df.index:
         dateiso.append(dateutil.parser.isoparse(week))
     dateiso = pd.DatetimeIndex(dateiso).to_period('W')
     series = pd.Series(data=df['vendite'].values, index=dateiso)
-    model = ExponentialSmoothing(series, seasonal_periods=26, seasonal='add', use_boxcox=False, initialization_method="estimated").fit()
+    model = ExponentialSmoothing(series, seasonal_periods=26, seasonal='add', initialization_method="estimated").fit()
     predict = model.forecast(weektopredict)
     week = df.index[df.index.size - 1]
     for i in range(0, weektopredict):
