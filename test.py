@@ -27,7 +27,7 @@ def main():
         forecast_date, forecast_value = average_forecasting(dativendita_colore['vendite'], week_to_forecast)
         dativendita_colore.loc[forecast_date] = forecast_value
     # plot_dataframe(dativendita_colore)
-    plot_dataframe(dativendita_colore,dativendita_colore_test, plot_name="Average", forecasting_indexes=forecast_index)
+    # plot_dataframe(dativendita_colore,dativendita_colore_test, plot_name="Average", forecasting_indexes=forecast_index)
     print("Average MASE: " + str(mase(dativendita_colore['vendite'], dativendita_colore_test['vendite'])))
 
 
@@ -55,24 +55,31 @@ def main():
     dativendita_colore = weeksdistrubution(train)
     for i in range(0, 27):
         driftmethod(dativendita_colore)
-    plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name="Drift", forecasting_indexes=forecast_index)
+    # plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name="Drift", forecasting_indexes=forecast_index)
     print("Drift MASE: " + str(mase(dativendita_colore['vendite'], dativendita_colore_test['vendite'])))
+
+    # SARIMA
+    for i in range(0, 27):
+        sarima_forecast(dativendita_colore)
+    plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name="Sarima", forecasting_indexes=forecast_index)
+    print("Drift MASE: " + str(mase(dativendita_colore['vendite'], dativendita_colore_test['vendite'])))
+
 
     # Seasonal Exp Smoothing
     dativendita_colore = weeksdistrubution(train)
     seasonalExp_smoothing(dativendita_colore,27)
-    plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name="HoltWinter", forecasting_indexes=forecast_index)
+    # plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name="HoltWinter", forecasting_indexes=forecast_index)
     print("ETS MASE: " + str(mase(dativendita_colore['vendite'], dativendita_colore_test['vendite'])))
 
     # Simple Exp Smoothing
     dativendita_colore = weeksdistrubution(train)
     smpExpSmoth(dativendita_colore, 27)
-    plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name='simpleExpSmothing', forecasting_indexes=forecast_index)
+    # plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name='simpleExpSmothing', forecasting_indexes=forecast_index)
     print("Simple ETS MASE: " + str(mase(dativendita_colore['vendite'], dativendita_colore_test['vendite'])))
 
     #     test score model
     d = dativendita_colore['vendite'].values.tolist()
-    n_test = 4
+    n_test = 27
     # model configs
     cfg_list = sarima_configs()
     # grid search

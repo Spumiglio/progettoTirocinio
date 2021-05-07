@@ -63,12 +63,25 @@ def seasonalExp_smoothing(df, weektopredict=1):
 
 
 # one-step sarima forecast
-def sarima_forecast(history, config):
+def sarima_forecast_test(history, config):
     order, sorder, trend = config
     # define model
     model = SARIMAX(history, order=order, seasonal_order=sorder, trend=trend, enforce_stationarity=False, enforce_invertibility=False)
-    # fit model
     model_fit = model.fit(disp=False)
-    # make one step forecast
     yhat = model_fit.predict(len(history), len(history))
     return yhat[0]
+
+def sarima_forecast(df, weektopredict=1):
+    dateiso = []
+    for week in df.index:
+        dateiso.append(dateutil.parser.isoparse(week))
+    dateiso = pd.DatetimeIndex(dateiso).to_period('W')
+    series = pd.Series(data=df['vendite'].values, index=dateiso)
+    model = SARIMAX(series, order=(1, 1, 0), seasonal_order=(0, 0, 0, 0), trend='ct', enforce_stationarity=False, enforce_invertibility=False)
+    model_fit = model.fit(disp=False)
+    predict = model_fit.get_prediction()
+    week = df.index[df.index.size - 1]
+    for i in range(0, weektopredict):
+        week = add_week(week, 1)
+        df.loc[week] = predict.predicted_mean.iloc[i]
+    return df
