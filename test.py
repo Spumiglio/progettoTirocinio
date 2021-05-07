@@ -25,7 +25,7 @@ def main():
 
     forecast_index = dativendita_colore.index.size - 1
 
-    print('Best method: ' + evaluate_simple_forecasts(dativendita_colore, dativendita_colore_test, 'vendite'))
+
 
     # Average
     for i in range(0, len(dativendita_colore_test.index)):
@@ -33,7 +33,7 @@ def main():
         forecast_date, forecast_value = average_forecasting(dativendita_colore['vendite'], week_to_forecast)
         dativendita_colore.loc[forecast_date] = forecast_value
     # plot_dataframe(dativendita_colore)
-    plot_dataframe(dativendita_colore,dativendita_colore_test, plot_name="Average", forecasting_indexes=forecast_index)
+    # plot_dataframe(dativendita_colore,dativendita_colore_test, plot_name="Average", forecasting_indexes=forecast_index)
 
 
     # Seasonal Naive
@@ -44,7 +44,7 @@ def main():
         forecast_date, forecast_value = seasonal_naive_forecasting(dativendita_colore['vendite'], week_to_forecast, 26, 1)
         dativendita_colore.loc[forecast_date] = forecast_value
     # plot_dataframe(dativendita_colore)
-    plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name="Seasonal Naive", forecasting_indexes=forecast_index)
+    # plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name="Seasonal Naive", forecasting_indexes=forecast_index)
 
     #  Naive
     dativendita_colore = weeksdistrubution(train)
@@ -52,32 +52,29 @@ def main():
         forecast_date, forecast_value = naive(dativendita_colore,dativendita_colore.index[dativendita_colore.index.size - 1])
         dativendita_colore.loc[forecast_date] = forecast_value
     # plot_dataframe(dativendita_colore,dativendita_colore_test, plot_name="Naive", forecasting_indexes=forecast_index)
-    print("Naive MASE: " + str(mase(dativendita_colore['vendite'], dativendita_colore_test['vendite'])))
 
     # Drift
     dativendita_colore = weeksdistrubution(train)
     for i in range(0, len(dativendita_colore_test.index)):
         driftmethod(dativendita_colore)
-    plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name="Drift", forecasting_indexes=forecast_index)
+    # plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name="Drift", forecasting_indexes=forecast_index)
 
     # Seasonal Exp Smoothing
     dativendita_colore = weeksdistrubution(train)
     seasonalExp_smoothing(dativendita_colore, len(dativendita_colore_test.index))
-    plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name="HoltWinter", forecasting_indexes=forecast_index)
+    # plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name="HoltWinter", forecasting_indexes=forecast_index)
 
     # Simple Exp Smoothing
     dativendita_colore = weeksdistrubution(train)
     smpExpSmoth(dativendita_colore, len(dativendita_colore_test.index))
-    plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name='simpleExpSmothing', forecasting_indexes=forecast_index)
+    # plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name='simpleExpSmothing', forecasting_indexes=forecast_index)
 
     # Sarima
 
     #     test score model
     d = dativendita_colore['vendite'].values.tolist()
     n_test = 10
-    # model configs
     cfg_list = sarima_configs()
-    # grid search
     scores = grid_search(d, cfg_list, n_test)
     print('done')
     # list top 3 configs
@@ -87,7 +84,11 @@ def main():
     cfg = ast.literal_eval(cfg)
     dativendita_colore = weeksdistrubution(train)
     sarima_forecast(dativendita_colore, cfg, 27)
-    plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name='Arima', forecasting_indexes=forecast_index)
+    # plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name='Arima', forecasting_indexes=forecast_index)
 
+
+    dativendita_colore = weeksdistrubution(train)
+    dativendita_colore_test = weeksdistrubution(test)
+    print('Best method: ' + evaluate_simple_forecasts(dativendita_colore, dativendita_colore_test, 'vendite', cfg))
 if __name__ == '__main__':
     main()

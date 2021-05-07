@@ -63,7 +63,7 @@ def prediction_interval(forecast_series, c=95):
     return forecast_series - (c_s[c] * stdev(forecast_series)), forecast_series + (c_s[c] * stdev(forecast_series))
 
 
-def evaluate_simple_forecasts(df_train, df_test, data_column_name, season=26):
+def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season=26):
     # naive
     df_train_copy = df_train.copy()
     naive_errors = {}
@@ -129,6 +129,15 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, season=26):
     simple_ets_error['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
     simple_ets_error['MASE'] = mase(df_train_copy[data_column_name], df_test[data_column_name])
 
+    # Sarima
+    df_train_copy = df_train.copy()
+    sarima_ets_error = {}
+    df_train_copy = sarima_forecast(df_train_copy,config,len(df_test.index))
+    sarima_ets_error['MAE'] = mae(df_train_copy[data_column_name], df_test[data_column_name])
+    sarima_ets_error['RMSE'] = rmse(df_train_copy[data_column_name], df_test[data_column_name])
+    sarima_ets_error['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
+    sarima_ets_error['MASE'] = mase(df_train_copy[data_column_name], df_test[data_column_name])
+
     errors = {'N': sum([naive_errors['MAE'], naive_errors['RMSE'], naive_errors['MAPE'], naive_errors['MASE']]),
               'SN': sum([seasonal_naive_errors['MAE'], seasonal_naive_errors['RMSE'], seasonal_naive_errors['MAPE'],
                          seasonal_naive_errors['MASE']]),
@@ -138,7 +147,11 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, season=26):
               'HW': sum([holt_winter_errors['MAE'], holt_winter_errors['RMSE'], holt_winter_errors['MAPE'],
                          holt_winter_errors['MASE']]),
               'SES': sum([simple_ets_error['MAE'], simple_ets_error['RMSE'], simple_ets_error['MAPE'],
-                          simple_ets_error['MASE']])}
+                          simple_ets_error['MASE']]),
+              'SRM':  sum([sarima_ets_error['MAE'], sarima_ets_error['RMSE'], sarima_ets_error['MAPE'],
+                          sarima_ets_error['MASE']]),
+              }
+
 
 
     print(errors)
