@@ -63,7 +63,7 @@ def prediction_interval(forecast_series, c=95):
     return forecast_series - (c_s[c] * stdev(forecast_series)), forecast_series + (c_s[c] * stdev(forecast_series))
 
 
-def evaluate_simple_forecasts(df_train, df_test, data_column_name, season=25):
+def evaluate_simple_forecasts(df_train, df_test, data_column_name, season=26):
     # naive
     df_train_copy = df_train.copy()
     naive_errors = {}

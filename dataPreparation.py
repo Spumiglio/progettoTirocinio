@@ -106,5 +106,33 @@ def box_cox_transformation(df, lambda_num, reverse=False):
     return df
 
 
+# fill_mode puo' essere 'V' per riempire con un valore numerico specificato da fill_value
+# oppure 'A' per riempire con la media dei valori prima e dopo
+# oppure 'N' per riempire con NaN
+def fill_missing_data(df, start='2016-W48', end='2019-W48', fill_mode='V', fill_value=0):
+    start_d = dateutil.parser.isoparse(start)
+    end_d = dateutil.parser.isoparse(end)
+    dates = pd.date_range(start=start_d, end=end_d, freq='W')
+    weeks = []
+    for data in dates:
+        week = str(data.isocalendar()[0]) + "-W" + str(data.isocalendar()[1])
+        weeks.append(week)
 
+    for i in range(0, len(weeks)):
+        if len(df.index) == i or df.index[i] != weeks[i]:
+            if fill_mode == 'V':
+                df.loc[weeks[i]] = fill_value
+            elif fill_mode == 'A':
+                if i == 0:
+                    before = 0
+                else:
+                    before = df.loc[weeks[i-1]]
+                if i == len(df.index):
+                    after = df.loc[weeks[i]]
+                else:
+                    after = df.loc[weeks[i+1]]
+                df.loc[weeks[i]] = (before + after) / 2
+            elif fill_mode == 'N':
+                df.loc[weeks[i]] = None
 
+    return df
