@@ -2,7 +2,7 @@ from forecasting import *
 from plotter import *
 from evaluation import *
 import pandas as pd
-
+import ast
 
 def main():
     dativendita = pd.read_csv("students_dataset_attr.csv").sort_values(by=["giorno_uscita"])
@@ -72,7 +72,7 @@ def main():
 
     #     test score model
     d = dativendita_colore['vendite'].values.tolist()
-    n_test = 27
+    n_test = 10
     # model configs
     cfg_list = sarima_configs()
     # grid search
@@ -80,10 +80,11 @@ def main():
     print('done')
     # list top 3 configs
     for cfg, error in scores[:3]:
-        alfonso = cfg
-        print(alfonso)
+        print(cfg, error)
+
+    cfg = ast.literal_eval(cfg)
     dativendita_colore = weeksdistrubution(train)
-    sarima_forecast(dativendita_colore, 27)
+    sarima_forecast(dativendita_colore, cfg, 27)
     plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name='Arima', forecasting_indexes=forecast_index)
 
 if __name__ == '__main__':
