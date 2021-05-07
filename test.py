@@ -7,7 +7,7 @@ import pandas as pd
 def main():
     dativendita = pd.read_csv("students_dataset_attr.csv").sort_values(by=["giorno_uscita"])
     dativendita = sommavendite(dativendita)
-    best20color(dativendita)
+    dativendita = best20color(dativendita)
     datetoweek(dativendita)
 
     # dativendita_nero = filter_by_color(dativendita, 'fantasia')
@@ -17,10 +17,11 @@ def main():
 
     dativendita_colore = weeksdistrubution(train)
 
-
     dativendita_colore_test = weeksdistrubution(test)
     forecast_index = dativendita_colore.index.size - 1
     # plot_dataframe(test_col, plot_name="Test")
+
+    print('Best method: ' + evaluate_simple_forecasts(dativendita_colore, dativendita_colore_test, 'vendite', season=25))
 
     # testing average
     for i in range(0, 27):
