@@ -11,7 +11,7 @@ def main():
     dativendita = best20color(dativendita)
     datetoweek(dativendita)
 
-    dativendita = filter_by_color(dativendita, 'nero')
+    dativendita = filter_by_color(dativendita, 'panna')
     dativendita_colore = weeksdistrubution(dativendita)
 
     dativendita_colore = fill_missing_data(dativendita_colore, start=dativendita_colore.index[0],
@@ -26,35 +26,35 @@ def main():
     # Average
     last_week = train.index[train.index.size - 1]
     average_forecasting(train, last_week, week_to_forecast=len(test.index))
-    plot_dataframe(train, test, plot_name="Average", forecasting_indexes=forecast_index)
+    # plot_dataframe(train, test, plot_name="Average", forecasting_indexes=forecast_index)
 
     # Seasonal Naive
     train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
     last_week = train.index[train.index.size - 1]
     seasonal_naive_forecasting(train, last_week, 26, 1, week_to_forecast=len(test.index))
-    plot_dataframe(train, test, plot_name="Seasonal Naive", forecasting_indexes=forecast_index)
+    # plot_dataframe(train, test, plot_name="Seasonal Naive", forecasting_indexes=forecast_index)
 
     #  Naive
     train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
     last_week = train.index[train.index.size - 1]
     naive(train, last_week, week_to_forecast=len(test.index))
-    plot_dataframe(train, test, plot_name="Naive", forecasting_indexes=forecast_index)
+    # plot_dataframe(train, test, plot_name="Naive", forecasting_indexes=forecast_index)
 
     # Drift
     train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
     last_week = train.index[train.index.size - 1]
     driftmethod(train, last_week, week_to_forecast=len(test.index))
-    plot_dataframe(train, test, plot_name="Drift", forecasting_indexes=forecast_index)
+    # plot_dataframe(train, test, plot_name="Drift", forecasting_indexes=forecast_index)
 
     # Seasonal Exp Smoothing
     train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
     seasonalExp_smoothing(train, len(test.index))
-    plot_dataframe(train, test, plot_name="Holt-Winters", forecasting_indexes=forecast_index)
+    # plot_dataframe(train, test, plot_name="Holt-Winters", forecasting_indexes=forecast_index)
 
     # Simple Exp Smoothing
     train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
     smpExpSmoth(train, len(test.index))
-    plot_dataframe(train, test, plot_name='Simple Exponential Smoothing', forecasting_indexes=forecast_index)
+    # plot_dataframe(train, test, plot_name='Simple Exponential Smoothing', forecasting_indexes=forecast_index)
 
     # Sarima
 

@@ -71,7 +71,7 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season
     naive(df_train_copy, last_week, week_to_forecast=len(df_train_copy.index))
     naive_errors['MAE'] = mae(df_train_copy[data_column_name], df_test[data_column_name])
     naive_errors['RMSE'] = rmse(df_train_copy[data_column_name], df_test[data_column_name])
-    naive_errors['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
+    # naive_errors['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
     naive_errors['MASE'] = mase(df_train_copy[data_column_name], df_test[data_column_name])
 
     # seasonal naive
@@ -81,7 +81,7 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season
     seasonal_naive_forecasting(df_train_copy, last_week, 26, 1, week_to_forecast=len(df_train_copy.index))
     seasonal_naive_errors['MAE'] = mae(df_train_copy[data_column_name], df_test[data_column_name])
     seasonal_naive_errors['RMSE'] = rmse(df_train_copy[data_column_name], df_test[data_column_name])
-    seasonal_naive_errors['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
+    # seasonal_naive_errors['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
     seasonal_naive_errors['MASE'] = mase(df_train_copy[data_column_name], df_test[data_column_name])
 
     # average
@@ -91,7 +91,7 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season
     average_forecasting(df_train_copy, last_week, week_to_forecast=len(df_train_copy.index))
     average_errors['MAE'] = mae(df_train_copy[data_column_name], df_test[data_column_name])
     average_errors['RMSE'] = rmse(df_train_copy[data_column_name], df_test[data_column_name])
-    average_errors['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
+    # average_errors['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
     average_errors['MASE'] = mase(df_train_copy[data_column_name], df_test[data_column_name])
 
     # drift
@@ -101,7 +101,7 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season
     driftmethod(df_train_copy, last_week, week_to_forecast=len(df_train_copy.index))
     drift_errors['MAE'] = mae(df_train_copy[data_column_name], df_test[data_column_name])
     drift_errors['RMSE'] = rmse(df_train_copy[data_column_name], df_test[data_column_name])
-    drift_errors['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
+    # drift_errors['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
     drift_errors['MASE'] = mase(df_train_copy[data_column_name], df_test[data_column_name])
 
     # Holt-Winters ETS
@@ -110,7 +110,7 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season
     df_train_copy = seasonalExp_smoothing(df_train_copy, len(df_test.index))
     holt_winter_errors['MAE'] = mae(df_train_copy[data_column_name], df_test[data_column_name])
     holt_winter_errors['RMSE'] = rmse(df_train_copy[data_column_name], df_test[data_column_name])
-    holt_winter_errors['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
+    # holt_winter_errors['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
     holt_winter_errors['MASE'] = mase(df_train_copy[data_column_name], df_test[data_column_name])
 
     # Simple ETS
@@ -119,7 +119,7 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season
     df_train_copy = smpExpSmoth(df_train_copy, len(df_test.index))
     simple_ets_error['MAE'] = mae(df_train_copy[data_column_name], df_test[data_column_name])
     simple_ets_error['RMSE'] = rmse(df_train_copy[data_column_name], df_test[data_column_name])
-    simple_ets_error['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
+    # simple_ets_error['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
     simple_ets_error['MASE'] = mase(df_train_copy[data_column_name], df_test[data_column_name])
 
     # Sarima
@@ -128,20 +128,20 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season
     df_train_copy = sarima_forecast(df_train_copy, config, len(df_test.index))
     sarima_ets_error['MAE'] = mae(df_train_copy[data_column_name], df_test[data_column_name])
     sarima_ets_error['RMSE'] = rmse(df_train_copy[data_column_name], df_test[data_column_name])
-    sarima_ets_error['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
+    # sarima_ets_error['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
     sarima_ets_error['MASE'] = mase(df_train_copy[data_column_name], df_test[data_column_name])
 
-    errors = {'N': sum([naive_errors['MAE'], naive_errors['RMSE'], naive_errors['MAPE'], naive_errors['MASE']]),
-              'SN': sum([seasonal_naive_errors['MAE'], seasonal_naive_errors['RMSE'], seasonal_naive_errors['MAPE'],
+    errors = {'N': sum([naive_errors['MAE'], naive_errors['RMSE'], naive_errors['MASE']]),
+              'SN': sum([seasonal_naive_errors['MAE'], seasonal_naive_errors['RMSE'],
                          seasonal_naive_errors['MASE']]),
               'AVG': sum(
-                  [average_errors['MAE'], average_errors['RMSE'], average_errors['MAPE'], average_errors['MASE']]),
-              'DR': sum([drift_errors['MAE'], drift_errors['RMSE'], drift_errors['MAPE'], drift_errors['MASE']]),
-              'HW': sum([holt_winter_errors['MAE'], holt_winter_errors['RMSE'], holt_winter_errors['MAPE'],
+                  [average_errors['MAE'], average_errors['RMSE'], average_errors['MASE']]),
+              'DR': sum([drift_errors['MAE'], drift_errors['RMSE'], drift_errors['MASE']]),
+              'HW': sum([holt_winter_errors['MAE'], holt_winter_errors['RMSE'],
                          holt_winter_errors['MASE']]),
-              'SES': sum([simple_ets_error['MAE'], simple_ets_error['RMSE'], simple_ets_error['MAPE'],
+              'SES': sum([simple_ets_error['MAE'], simple_ets_error['RMSE'],
                           simple_ets_error['MASE']]),
-              'SRM':  sum([sarima_ets_error['MAE'], sarima_ets_error['RMSE'], sarima_ets_error['MAPE'],
+              'SRM':  sum([sarima_ets_error['MAE'], sarima_ets_error['RMSE'],
                           sarima_ets_error['MASE']]),
               }
     print(errors)
