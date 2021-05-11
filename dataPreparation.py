@@ -92,18 +92,23 @@ def datasplitter(dativendita, testsize=0.2):
     return train, test
 
 
+def data_splitter(data, n_test):
+    return data[:-n_test], data[-n_test:]
+
+
 def box_cox_transformation(df, lambda_num, reverse=False):
     for index in df.index:
         if not reverse:
             if lambda_num == 0:
                 df.loc[index] = log(df.loc[index])
             else:
-                df.loc[index] = np.sign(df.loc[index]) * ((abs(df.loc[index])**lambda_num - 1) / lambda_num)
+                df.loc[index] = np.sign(df.loc[index]) * ((abs(df.loc[index]) ** lambda_num - 1) / lambda_num)
         else:
             if lambda_num == 0:
                 df.loc[index] = exp(df.loc[index])
             else:
-                df.loc[index] = np.sign(lambda_num * df.loc[index] + 1) * (abs(lambda_num * df.loc[index] + 1)**(1/lambda_num))
+                df.loc[index] = np.sign(lambda_num * df.loc[index] + 1) * (
+                            abs(lambda_num * df.loc[index] + 1) ** (1 / lambda_num))
 
     return df
 
@@ -123,18 +128,25 @@ def fill_missing_data(df, start='2016-W48', end='2019-W48', fill_mode='V', fill_
     for i in range(0, len(weeks)):
         if len(df.index) == i or df.index[i] != weeks[i]:
             if fill_mode == 'V':
-                df.loc[weeks[i]] = fill_value
+                df = insert_new_row(df, i, weeks[i], fill_value)
             elif fill_mode == 'A':
                 if i == 0:
                     before = 0
                 else:
-                    before = df.loc[weeks[i-1]]
+                    before = df.loc[weeks[i - 1]]
                 if i == len(df.index):
                     after = df.loc[weeks[i]]
                 else:
-                    after = df.loc[weeks[i+1]]
-                df.loc[weeks[i]] = (before + after) / 2
+                    after = df.loc[weeks[i + 1]]
+                df = insert_new_row(df, i, weeks[i], (before + after) / 2)
             elif fill_mode == 'N':
-                df.loc[weeks[i]] = None
+                df = insert_new_row(df, i, weeks[i], None)
 
     return df
+
+
+def insert_new_row(df, pos, index, value):
+    df1 = df[0:pos]
+    df2 = df[pos:]
+    df1.loc[index] = value
+    return pd.concat([df1, df2])
