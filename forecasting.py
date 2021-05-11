@@ -8,21 +8,6 @@ from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from statsmodels.tsa.holtwinters import *
 
 
-def smpExpSmoth(df, num_of_forcast):
-    dateiso = []
-    for week in df.index:
-        dateiso.append(dateutil.parser.isoparse(week))
-    dateiso = pd.DatetimeIndex(dateiso).to_period('W')
-    newse = pd.Series(data=df['vendite'].values, index=dateiso)
-    model = SimpleExpSmoothing(newse, initialization_method='estimated').fit(smoothing_level=0.6, optimized=False)
-    predict = model.forecast(num_of_forcast)
-    week = df.index[df.index.size - 1]
-    for i in range(0, num_of_forcast):
-        week = add_week(week, 1)
-        df.loc[week] = predict.iloc[i]
-    return df
-
-
 def naive(df,week, week_to_forecast=27):
     for i in range(0, week_to_forecast):
         week = add_week(week, 1)
@@ -35,9 +20,9 @@ def driftmethod(df, week, week_to_forecast=27):
         y_t = df.loc[df.index[len(df) - 1]]['vendite']
         m = (y_t - df.loc[df.index[0]]['vendite']) / len(df)
         h = 1
-        valforecast = y_t + m * h
+        val_forecast = y_t + m * h
         week = add_week(week, 1)
-        df.loc[week] = valforecast
+        df.loc[week] = val_forecast
     return df
 
 
@@ -56,29 +41,44 @@ def seasonal_naive_forecasting(df, last_week, season_length, h, week_to_forecast
     return df
 
 
-def seasonalExp_smoothing(df, weektopredict=1):
+def smpExpSmoth(df, num_of_forecast):
+    dateiso = []
+    for week in df.index:
+        dateiso.append(dateutil.parser.isoparse(week))
+    dateiso = pd.DatetimeIndex(dateiso).to_period('W')
+    series = pd.Series(data=df['vendite'].values, index=dateiso)
+    model = SimpleExpSmoothing(series, initialization_method='estimated').fit(smoothing_level=0.6, optimized=False)
+    predict = model.forecast(num_of_forecast)
+    week = df.index[df.index.size - 1]
+    for i in range(0, num_of_forecast):
+        week = add_week(week, 1)
+        df.loc[week] = predict.iloc[i]
+    return df
+
+
+def seasonalExp_smoothing(df, week_to_predict=1):
     dateiso = []
     for week in df.index:
         dateiso.append(dateutil.parser.isoparse(week))
     dateiso = pd.DatetimeIndex(dateiso).to_period('W')
     series = pd.Series(data=df['vendite'].values, index=dateiso)
     model = ExponentialSmoothing(series, seasonal_periods=26, seasonal='add', initialization_method="estimated").fit()
-    predict = model.forecast(weektopredict)
+    predict = model.forecast(week_to_predict)
     week = df.index[df.index.size - 1]
-    for i in range(0, weektopredict):
+    for i in range(0, week_to_predict):
         week = add_week(week, 1)
         df.loc[week] = predict.iloc[i]
     return df
 
 
-# one-step sarima forecast
 def sarima_forecast_test(history, config):
-    order,sorder, trend = config
+    order, sorder, trend = config
     # define model
     model = SARIMAX(history, order=order, seasonal_order=sorder, trend=trend, enforce_stationarity=False, enforce_invertibility=False)
     model_fit = model.fit(disp=False)
     yhat = model_fit.predict(len(history), len(history))
     return yhat[0]
+
 
 def sarima_forecast(df, config, weektopredict=1):
     dateiso = []

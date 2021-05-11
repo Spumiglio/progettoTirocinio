@@ -17,12 +17,14 @@ def filter_by_color(df, color):
     df = df[df['colore'] == color]
     return df
 
+
 def dataframelist(df):
     dflist = []
     colorlist = best20colorlist(df)
     for color in colorlist:
         dflist.append(filter_by_color(df, color))
     return dflist
+
 
 def best20color(dativendita):
     rag = dativendita.groupby(by="colore").sum().sort_values(by=["somma_vendite"], ascending=False).head(20)

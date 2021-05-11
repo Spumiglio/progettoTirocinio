@@ -4,6 +4,7 @@ from evaluation import *
 import pandas as pd
 import ast
 
+
 def main():
     dativendita = pd.read_csv("students_dataset_attr.csv").sort_values(by=["giorno_uscita"])
     dativendita = sommavendite(dativendita)
@@ -24,31 +25,28 @@ def main():
 
     forecast_index = dativendita_colore.index.size - 1
 
-
-
     # Average
     dativendita_colore = weeksdistrubution(train)
     last_week = dativendita_colore.index[dativendita_colore.index.size - 1]
-    average_forecasting(dativendita_colore, last_week, week_to_forecast=len(dativendita_colore_test.index) )
+    average_forecasting(dativendita_colore, last_week, week_to_forecast=len(dativendita_colore_test.index))
     # plot_dataframe(dativendita_colore,dativendita_colore_test, plot_name="Average", forecasting_indexes=forecast_index)
-
 
     # Seasonal Naive
     dativendita_colore = weeksdistrubution(train)
     last_week = dativendita_colore.index[dativendita_colore.index.size - 1]
-    seasonal_naive_forecasting(dativendita_colore, last_week, 26, 1, week_to_forecast=len(dativendita_colore_test.index) )
+    seasonal_naive_forecasting(dativendita_colore, last_week, 26, 1, week_to_forecast=len(dativendita_colore_test.index))
     # plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name="Seasonal Naive", forecasting_indexes=forecast_index)
 
     #  Naive
     dativendita_colore = weeksdistrubution(train)
     last_week = dativendita_colore.index[dativendita_colore.index.size - 1]
-    naive(dativendita_colore,last_week,week_to_forecast=len(dativendita_colore_test.index))
+    naive(dativendita_colore, last_week, week_to_forecast=len(dativendita_colore_test.index))
     # plot_dataframe(dativendita_colore,dativendita_colore_test, plot_name="Naive", forecasting_indexes=forecast_index)
 
     # Drift
     dativendita_colore = weeksdistrubution(train)
     last_week = dativendita_colore.index[dativendita_colore.index.size - 1]
-    driftmethod(dativendita_colore, last_week,week_to_forecast=len(dativendita_colore_test.index))
+    driftmethod(dativendita_colore, last_week, week_to_forecast=len(dativendita_colore_test.index))
     # plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name="Drift", forecasting_indexes=forecast_index)
 
     # Seasonal Exp Smoothing
@@ -62,14 +60,11 @@ def main():
     # plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name='simpleExpSmothing', forecasting_indexes=forecast_index)
 
     # Sarima
-
-    #     test score model
-    d = dativendita_colore['vendite'].values.tolist()
-    n_test = 27
-    cfg_list = sarima_configs()
-    scores = grid_search(d, cfg_list, n_test)
-    print('done')
-    # list top 3 configs
+    dativendita_colore = weeksdistrubution(train)
+    # Score Model Sarima
+    scores = grid_search(dativendita_colore['vendite'].values.tolist(), sarima_configs(), n_test=3)
+    # List top 3 configs
+    print('Top 3:')
     for cfg, error in scores[:3]:
         print(cfg, error)
 
@@ -78,9 +73,10 @@ def main():
     sarima_forecast(dativendita_colore, cfg, 27)
     plot_dataframe(dativendita_colore, dativendita_colore_test, plot_name='Arima', forecasting_indexes=forecast_index)
 
-
     dativendita_colore = weeksdistrubution(train)
     dativendita_colore_test = weeksdistrubution(test)
     print('Best method: ' + evaluate_simple_forecasts(dativendita_colore, dativendita_colore_test, 'vendite', cfg))
+
+
 if __name__ == '__main__':
     main()

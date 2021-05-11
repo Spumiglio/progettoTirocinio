@@ -125,7 +125,7 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season
     # Sarima
     df_train_copy = df_train.copy()
     sarima_ets_error = {}
-    df_train_copy = sarima_forecast(df_train_copy,config,len(df_test.index))
+    df_train_copy = sarima_forecast(df_train_copy, config, len(df_test.index))
     sarima_ets_error['MAE'] = mae(df_train_copy[data_column_name], df_test[data_column_name])
     sarima_ets_error['RMSE'] = rmse(df_train_copy[data_column_name], df_test[data_column_name])
     sarima_ets_error['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
@@ -144,9 +144,6 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season
               'SRM':  sum([sarima_ets_error['MAE'], sarima_ets_error['RMSE'], sarima_ets_error['MAPE'],
                           sarima_ets_error['MASE']]),
               }
-
-
-
     print(errors)
     keys = list(errors.keys())
     vals = list(errors.values())
