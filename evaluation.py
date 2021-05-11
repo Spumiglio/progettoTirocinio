@@ -67,10 +67,8 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season
     # naive
     df_train_copy = df_train.copy()
     naive_errors = {}
-    for i in range(0, len(df_test.index)):
-        week_to_forecast = df_train_copy.index[df_train_copy.index.size - 1]
-        forecast_date, forecast_value = naive(df_train_copy[data_column_name], week_to_forecast)
-        df_train_copy.loc[forecast_date] = forecast_value
+    last_week = df_train_copy.index[df_train_copy.index.size - 1]
+    naive(df_train_copy, last_week, week_to_forecast=len(df_train_copy.index))
     naive_errors['MAE'] = mae(df_train_copy[data_column_name], df_test[data_column_name])
     naive_errors['RMSE'] = rmse(df_train_copy[data_column_name], df_test[data_column_name])
     naive_errors['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
@@ -79,11 +77,8 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season
     # seasonal naive
     df_train_copy = df_train.copy()
     seasonal_naive_errors = {}
-    for i in range(0, len(df_test.index)):
-        week_to_forecast = df_train_copy.index[df_train_copy.index.size - 1]
-        forecast_date, forecast_value = seasonal_naive_forecasting(df_train_copy[data_column_name], week_to_forecast,
-                                                                   season, 1)
-        df_train_copy.loc[forecast_date] = forecast_value
+    last_week = df_train_copy.index[df_train_copy.index.size - 1]
+    seasonal_naive_forecasting(df_train_copy, last_week, 26, 1, week_to_forecast=len(df_train_copy.index))
     seasonal_naive_errors['MAE'] = mae(df_train_copy[data_column_name], df_test[data_column_name])
     seasonal_naive_errors['RMSE'] = rmse(df_train_copy[data_column_name], df_test[data_column_name])
     seasonal_naive_errors['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
@@ -92,10 +87,8 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season
     # average
     df_train_copy = df_train.copy()
     average_errors = {}
-    for i in range(0, len(df_test.index)):
-        week_to_forecast = df_train_copy.index[df_train_copy.index.size - 1]
-        forecast_date, forecast_value = average_forecasting(df_train_copy[data_column_name], week_to_forecast)
-        df_train_copy.loc[forecast_date] = forecast_value
+    last_week = df_train_copy.index[df_train_copy.index.size - 1]
+    average_forecasting(df_train_copy, last_week, week_to_forecast=len(df_train_copy.index))
     average_errors['MAE'] = mae(df_train_copy[data_column_name], df_test[data_column_name])
     average_errors['RMSE'] = rmse(df_train_copy[data_column_name], df_test[data_column_name])
     average_errors['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
@@ -104,8 +97,8 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season
     # drift
     df_train_copy = df_train.copy()
     drift_errors = {}
-    for i in range(0, len(df_test.index)):
-        df_train_copy = driftmethod(df_train_copy)
+    last_week = df_train_copy.index[df_train_copy.index.size - 1]
+    driftmethod(df_train_copy, last_week, week_to_forecast=len(df_train_copy.index))
     drift_errors['MAE'] = mae(df_train_copy[data_column_name], df_test[data_column_name])
     drift_errors['RMSE'] = rmse(df_train_copy[data_column_name], df_test[data_column_name])
     drift_errors['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
