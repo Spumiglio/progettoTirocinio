@@ -23,28 +23,37 @@ def smpExpSmoth(df, num_of_forcast):
     return df
 
 
-def naive(series_to_forecast, week_to_forecast):
-    return add_week(week_to_forecast, 1), series_to_forecast.tail(1).values[0]
-
-
-def driftmethod(df):
-    y_t = df.loc[df.index[len(df) - 1]]['vendite']
-    m = (y_t - df.loc[df.index[0]]['vendite']) / len(df)
-    h = 1
-    valforecast = y_t + m * h
-    new_week = add_week(df.index[len(df) - 1], 1)
-    df.loc[new_week] = valforecast
+def naive(df,week, week_to_forecast=27):
+    for i in range(0, week_to_forecast):
+        week = add_week(week, 1)
+        df.loc[week] = df.tail(1).values[0]
     return df
 
 
-def average_forecasting(series_to_forecast, week_to_forecast):
-    avg = int(series_to_forecast.mean())
-    return add_week(week_to_forecast, 1), avg
+def driftmethod(df, week, week_to_forecast=27):
+    for i in range(0, week_to_forecast):
+        y_t = df.loc[df.index[len(df) - 1]]['vendite']
+        m = (y_t - df.loc[df.index[0]]['vendite']) / len(df)
+        h = 1
+        valforecast = y_t + m * h
+        week = add_week(week, 1)
+        df.loc[week] = valforecast
+    return df
 
 
-def seasonal_naive_forecasting(series_to_forecast, week_to_forecast, season_length, h):
+def average_forecasting(df, last_week, week_to_forecast=27):
+    for i in range(0, week_to_forecast):
+        last_week = add_week(last_week, 1)
+        df.loc[last_week] = int(df.mean())
+    return df
+
+
+def seasonal_naive_forecasting(df, last_week, season_length, h, week_to_forecast=27):
     k = int((h - 1) / season_length)
-    return add_week(week_to_forecast, 1), series_to_forecast[series_to_forecast.size + h - season_length * (k + 1)]
+    for i in range(0, week_to_forecast):
+        last_week = add_week(last_week, 1)
+        df.loc[last_week] = df.size + h - season_length * (k + 1)
+    return df
 
 
 def seasonalExp_smoothing(df, weektopredict=1):
