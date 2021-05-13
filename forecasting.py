@@ -37,7 +37,7 @@ def seasonal_naive_forecasting(df, last_week, season_length, h, week_to_forecast
     k = int((h - 1) / season_length)
     for i in range(0, week_to_forecast):
         last_week = add_week(last_week, 1)
-        df.loc[last_week] = df.size + h - season_length * (k + 1)
+        df.loc[last_week] = df.iloc[df.size + h - season_length * (k + 1)]
     return df
 
 
