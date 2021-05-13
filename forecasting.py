@@ -3,8 +3,6 @@ from dateutil import parser
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 from dataPreparation import *
-from statsmodels.tsa.holtwinters import SimpleExpSmoothing
-from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from statsmodels.tsa.holtwinters import *
 
 
@@ -47,7 +45,7 @@ def smpExpSmoth(df, num_of_forecast):
         dateiso.append(dateutil.parser.isoparse(week))
     dateiso = pd.DatetimeIndex(dateiso).to_period('W')
     series = pd.Series(data=df['vendite'].values, index=dateiso)
-    model = SimpleExpSmoothing(series, initialization_method='estimated').fit(smoothing_level=0.6, optimized=False)
+    model = SimpleExpSmoothing(series, initialization_method='estimated').fit(smoothing_level=0.6, optimized=True)
     predict = model.forecast(num_of_forecast)
     week = df.index[df.index.size - 1]
     for i in range(0, num_of_forecast):
@@ -91,11 +89,34 @@ def sarima_forecast(df, config, weektopredict=1):
     sorder = config[1]
     trend = config[2]
 
-    model = SARIMAX(series, order=order, seasonal_order=sorder, trend=trend, enforce_stationarity=False, enforce_invertibility=False)
+    model = SARIMAX(series, order=order, seasonal_order=sorder, trend=trend, enforce_stationarity=True, enforce_invertibility=True)
     model_fit = model.fit(disp=False)
     predict = model_fit.get_prediction()
     week = df.index[df.index.size - 1]
     for i in range(0, weektopredict):
         week = add_week(week, 1)
         df.loc[week] = predict.predicted_mean.iloc[i]
+    return df
+
+
+def aggregate_models(df, models, weektopredict):
+    df_drifted = 0
+    df_hw = 0
+    df_ses = 0
+    df_snf = 0
+
+    for model in models:
+        if model == "Drift":
+            df_drifted = driftmethod(df.copy(), df.copy().index[df.copy().index.size - 1], weektopredict).copy()
+        if model == "HW":
+            df_hw = seasonalExp_smoothing(df.copy(), weektopredict)
+        if model == "SES":
+            df_ses = smpExpSmoth(df.copy(), weektopredict)
+        if model == "SNF":
+            df_snf = seasonal_naive_forecasting(df.copy(), df.index[df.copy().index.size - 1], 26, 1, weektopredict)
+
+    for i in range(len(df.index), len(df.index)+weektopredict):
+        val = (df_drifted.iloc[i] + df_hw.iloc[i] + df_ses.iloc[i] + df_snf.iloc[i])/len(models)
+        df.loc[df_drifted.index[i]] = val
+
     return df
