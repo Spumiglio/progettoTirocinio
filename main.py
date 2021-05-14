@@ -3,7 +3,8 @@ from plotter import *
 from evaluation import *
 import pandas as pd
 import ast
-
+from matplotlib import pyplot
+from statsmodels.graphics.tsaplots import plot_acf
 
 def main():
     dativendita = pd.read_csv("students_dataset_attr.csv").sort_values(by=["giorno_uscita"])
@@ -11,50 +12,58 @@ def main():
     dativendita = best20color(dativendita)
     datetoweek(dativendita)
 
-    dativendita = filter_by_color(dativendita, 'fantasia')
+    dativendita = filter_by_color(dativendita, 'nero')
     dativendita_colore = weeksdistrubution(dativendita)
 
     dativendita_colore = fill_missing_data(dativendita_colore, start=dativendita_colore.index[0],
                                            end=dativendita_colore.index[len(dativendita_colore.index) - 1],
                                            fill_mode='V', fill_value=0)
 
+
+
     train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
 
     forecast_index = train.index.size - 1
 
+    # Autocorrelazione con pandas
+    autocorrelazione = train.squeeze().autocorr()
+
+    # Autocorrelazione con Statsmodel
+    plot_acf(train, title="autocorrelazione train", lags=None)
+    pyplot.show()
 
     # Average
     last_week = train.index[train.index.size - 1]
     average_forecasting(train, last_week, week_to_forecast=len(test.index))
-    plot_dataframe(train, test, plot_name="Average", forecasting_indexes=forecast_index)
+    # plot_dataframe(train, test, plot_name="Average", forecasting_indexes=forecast_index)
 
     # Seasonal Naive
     train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
     last_week = train.index[train.index.size - 1]
     seasonal_naive_forecasting(train, last_week, 26, 1, week_to_forecast=len(test.index))
-    plot_dataframe(train, test, plot_name="Seasonal Naive", forecasting_indexes=forecast_index)
+    # plot_dataframe(train, test, plot_name="Seasonal Naive", forecasting_indexes=forecast_index)
 
     #  Naive
     train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
     last_week = train.index[train.index.size - 1]
     naive(train, last_week, week_to_forecast=len(test.index))
-    plot_dataframe(train, test, plot_name="Naive", forecasting_indexes=forecast_index)
+    # plot_dataframe(train, test, plot_name="Naive", forecasting_indexes=forecast_index)
 
     # Drift
     train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
     last_week = train.index[train.index.size - 1]
     driftmethod(train, last_week, week_to_forecast=len(test.index))
-    plot_dataframe(train, test, plot_name="Drift", forecasting_indexes=forecast_index)
+    # plot_dataframe(train, test, plot_name="Drift", forecasting_indexes=forecast_index)
 
     # Seasonal Exp Smoothing
     train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
     seasonalExp_smoothing(train, len(test.index))
-    plot_dataframe(train, test, plot_name="Holt-Winters", forecasting_indexes=forecast_index)
+    # plot_dataframe(train, test, plot_name="Holt-Winters", forecasting_indexes=forecast_index)
 
     # Simple Exp Smoothing
     train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
     smpExpSmoth(train, len(test.index))
-    plot_dataframe(train, test, plot_name='Simple Exponential Smoothing', forecasting_indexes=forecast_index)
+    # plot_dataframe(train, test, plot_name='Simple Exponential Smoothing', forecasting_indexes=forecast_index)
 
     # Sarima
 
