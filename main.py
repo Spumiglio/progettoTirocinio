@@ -19,8 +19,6 @@ def main():
                                            end=dativendita_colore.index[len(dativendita_colore.index) - 1],
                                            fill_mode='V', fill_value=0)
 
-
-
     train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
 
     forecast_index = train.index.size - 1
@@ -53,36 +51,42 @@ def main():
     train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
     last_week = train.index[train.index.size - 1]
     driftmethod(train, last_week, week_to_forecast=len(test.index))
-    # plot_dataframe(train, test, plot_name="Drift", forecasting_indexes=forecast_index)
+    plot_dataframe(train, test, plot_name="Drift", forecasting_indexes=forecast_index)
 
     # Seasonal Exp Smoothing
     train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
     seasonalExp_smoothing(train, len(test.index))
-    # plot_dataframe(train, test, plot_name="Holt-Winters", forecasting_indexes=forecast_index)
+    plot_dataframe(train, test, plot_name="Holt-Winters", forecasting_indexes=forecast_index)
 
     # Simple Exp Smoothing
     train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
     smpExpSmoth(train, len(test.index))
-    # plot_dataframe(train, test, plot_name='Simple Exponential Smoothing', forecasting_indexes=forecast_index)
+    plot_dataframe(train, test, plot_name='Simple Exponential Smoothing', forecasting_indexes=forecast_index)
 
     # Sarima
+    #
+    # #     test score model
+    # train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
+    # # Score Model Sarima
+    # scores = grid_search(train['vendite'].values.tolist(), sarima_configs(), n_test=10)
+    # # List top 3 configs
+    # print('Top 3:')
+    # for cfg, error in scores[:3]:
+    #     print(cfg, error)
+    #
+    # cfg = ast.literal_eval(cfg)
+    # train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
+    # sarima_forecast(train, cfg, 27)
+    # plot_dataframe(train, test, plot_name='Arima', forecasting_indexes=forecast_index)
+    #
+    # train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
+    # print('Best method: ' + evaluate_simple_forecasts(train, test, 'vendite', cfg))
 
-    #     test score model
+    # Aggregate Testing
     train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
-    # Score Model Sarima
-    scores = grid_search(train['vendite'].values.tolist(), sarima_configs(), n_test=3)
-    # List top 3 configs
-    print('Top 3:')
-    for cfg, error in scores[:3]:
-        print(cfg, error)
-
-    cfg = ast.literal_eval(cfg)
-    train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
-    sarima_forecast(train, cfg, 27)
-    plot_dataframe(train, test, plot_name='Arima', forecasting_indexes=forecast_index)
-
-    train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
-    print('Best method: ' + evaluate_simple_forecasts(train, test, 'vendite', cfg))
+    models = ["Drift","SNF","SES"]
+    aggregate_models(train, models, 27)
+    plot_dataframe(train, test, plot_name="Aggregate", forecasting_indexes=forecast_index)
 
 
 if __name__ == '__main__':
