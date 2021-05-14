@@ -3,7 +3,8 @@ from plotter import *
 from evaluation import *
 import pandas as pd
 import ast
-
+from matplotlib import pyplot
+from statsmodels.graphics.tsaplots import plot_acf
 
 def main():
     dativendita = pd.read_csv("students_dataset_attr.csv").sort_values(by=["giorno_uscita"])
@@ -11,7 +12,7 @@ def main():
     dativendita = best20color(dativendita)
     datetoweek(dativendita)
 
-    dativendita = filter_by_color(dativendita, 'verde')
+    dativendita = filter_by_color(dativendita, 'nero')
     dativendita_colore = weeksdistrubution(dativendita)
 
     dativendita_colore = fill_missing_data(dativendita_colore, start=dativendita_colore.index[0],
@@ -21,11 +22,21 @@ def main():
     train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
 
     forecast_index = train.index.size - 1
+
+    # Autocorrelazione con pandas
+    autocorrelazione = train.squeeze().autocorr()
+
+    # Autocorrelazione con Statsmodel
+    plot_acf(train, title="autocorrelazione train", lags=None)
+    pyplot.show()
+
+    # Average
     last_week = train.index[train.index.size - 1]
 
     # Average
     df_avg = average_forecasting(train.copy(), last_week, week_to_forecast=len(test.index))
     plot_dataframe(df_avg, test, plot_name="Average", forecasting_indexes=forecast_index)
+
 
     # Seasonal Naive
     df_sn = seasonal_naive_forecasting(train.copy(), last_week, 26, 1, week_to_forecast=len(test.index))
