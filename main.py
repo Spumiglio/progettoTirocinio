@@ -21,65 +21,51 @@ def main():
     train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
 
     forecast_index = train.index.size - 1
-
+    last_week = train.index[train.index.size - 1]
 
     # Average
-    last_week = train.index[train.index.size - 1]
-    average_forecasting(train, last_week, week_to_forecast=len(test.index))
-    plot_dataframe(train, test, plot_name="Average", forecasting_indexes=forecast_index)
+    df_avg = average_forecasting(train.copy(), last_week, week_to_forecast=len(test.index))
+    plot_dataframe(df_avg, test, plot_name="Average", forecasting_indexes=forecast_index)
 
     # Seasonal Naive
-    train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
-    last_week = train.index[train.index.size - 1]
-    seasonal_naive_forecasting(train, last_week, 26, 1, week_to_forecast=len(test.index))
-    plot_dataframe(train, test, plot_name="Seasonal Naive", forecasting_indexes=forecast_index)
+    df_sn = seasonal_naive_forecasting(train.copy(), last_week, 26, 1, week_to_forecast=len(test.index))
+    plot_dataframe(df_sn, test, plot_name="Seasonal Naive", forecasting_indexes=forecast_index)
 
     #  Naive
-    train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
-    last_week = train.index[train.index.size - 1]
-    naive(train, last_week, week_to_forecast=len(test.index))
-    plot_dataframe(train, test, plot_name="Naive", forecasting_indexes=forecast_index)
+    df_n = naive(train.copy(), last_week, week_to_forecast=len(test.index))
+    plot_dataframe(df_n, test, plot_name="Naive", forecasting_indexes=forecast_index)
 
     # Drift
-    train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
-    last_week = train.index[train.index.size - 1]
-    driftmethod(train, last_week, week_to_forecast=len(test.index))
-    plot_dataframe(train, test, plot_name="Drift", forecasting_indexes=forecast_index)
+    df_d = driftmethod(train.copy(), last_week, week_to_forecast=len(test.index))
+    plot_dataframe(df_d, test, plot_name="Drift", forecasting_indexes=forecast_index)
 
     # Seasonal Exp Smoothing
-    train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
-    seasonalExp_smoothing(train, len(test.index))
-    plot_dataframe(train, test, plot_name="Holt-Winters", forecasting_indexes=forecast_index)
+    df_hw = seasonalExp_smoothing(train.copy(), len(test.index))
+    plot_dataframe(df_hw, test, plot_name="Holt-Winters", forecasting_indexes=forecast_index)
 
     # Simple Exp Smoothing
-    train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
-    smpExpSmoth(train, len(test.index))
-    plot_dataframe(train, test, plot_name='Simple Exponential Smoothing', forecasting_indexes=forecast_index)
+    df_ses = smpExpSmoth(train.copy(), len(test.index))
+    plot_dataframe(df_ses, test, plot_name='Simple Exponential Smoothing', forecasting_indexes=forecast_index)
 
     # Sarima
-    #
-    # #     test score model
-    # train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
-    # # Score Model Sarima
-    # scores = grid_search(train['vendite'].values.tolist(), sarima_configs(), n_test=10)
-    # # List top 3 configs
-    # print('Top 3:')
-    # for cfg, error in scores[:3]:
-    #     print(cfg, error)
-    #
-    # cfg = ast.literal_eval(cfg)
-    # train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
-    # sarima_forecast(train, cfg, 27)
-    # plot_dataframe(train, test, plot_name='Arima', forecasting_indexes=forecast_index)
-    #
-    # train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
-    # print('Best method: ' + evaluate_simple_forecasts(train, test, 'vendite', cfg))
+    # test score model
+    # Score Model Sarima
+    scores = grid_search(train['vendite'].copy().values.tolist(), sarima_configs(), n_test=10)
+    # List top 3 configs
+    print('Top 3:')
+    for cfg, error in scores[:3]:
+        print(cfg, error)
+
+    cfg = ast.literal_eval(cfg)
+    df_sar = sarima_forecast(train.copy(), cfg, 27)
+    plot_dataframe(df_sar, test, plot_name='Arima', forecasting_indexes=forecast_index)
+
+    print('Best method: ' + evaluate_simple_forecasts(train, test, 'vendite', cfg))
 
     # Aggregate Testing
-    train, test = data_splitter(dativendita_colore, int(len(dativendita_colore.index) * 0.2))
-    models = ["Drift","SNF","SES"]
-    aggregate_models(train, models, 27)
-    plot_dataframe(train, test, plot_name="Aggregate", forecasting_indexes=forecast_index)
+    models = [df_hw, df_sn, df_sar]
+    aggregate = aggregate_models(models)
+    plot_dataframe(aggregate, test, plot_name="Aggregate", forecasting_indexes=forecast_index)
 
 
 if __name__ == '__main__':

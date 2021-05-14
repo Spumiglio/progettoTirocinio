@@ -99,24 +99,6 @@ def sarima_forecast(df, config, weektopredict=1):
     return df
 
 
-def aggregate_models(df, models, weektopredict):
-    df_drifted = 0
-    df_hw = 0
-    df_ses = 0
-    df_snf = 0
-
-    for model in models:
-        if model == "Drift":
-            df_drifted = driftmethod(df.copy(), df.copy().index[df.copy().index.size - 1], weektopredict).copy()
-        if model == "HW":
-            df_hw = seasonalExp_smoothing(df.copy(), weektopredict)
-        if model == "SES":
-            df_ses = smpExpSmoth(df.copy(), weektopredict)
-        if model == "SNF":
-            df_snf = seasonal_naive_forecasting(df.copy(), df.index[df.copy().index.size - 1], 26, 1, weektopredict)
-
-    for i in range(len(df.index), len(df.index)+weektopredict):
-        val = (df_drifted.iloc[i] + df_hw.iloc[i] + df_ses.iloc[i] + df_snf.iloc[i])/len(models)
-        df.loc[df_drifted.index[i]] = val
-
+def aggregate_models(models):
+    df = sum(models)/len(models)
     return df
