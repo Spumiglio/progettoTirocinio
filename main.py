@@ -68,7 +68,7 @@ def main():
         print(cfg, error)
 
     cfg = ast.literal_eval(cfg)
-    df_sar = sarima_forecast(train.copy(), cfg, 27)
+    df_sar = sarima_forecast(train.copy(), cfg, len(test.index))
     plot_dataframe(df_sar, test, plot_name='Arima', forecasting_indexes=forecast_index)
 
     print('Best method: ' + evaluate_simple_forecasts(train, test, 'vendite', cfg))
