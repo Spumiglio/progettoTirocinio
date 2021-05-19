@@ -1,12 +1,15 @@
 import pandas as pd
 from dateutil import parser
+from statsmodels.tsa._stl import STL
+from statsmodels.tsa.forecasting.stl import STLForecast
+from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 from dataPreparation import *
 from statsmodels.tsa.holtwinters import *
 
 
-def naive(df,week, week_to_forecast=27):
+def naive(df, week, week_to_forecast=27):
     for i in range(0, week_to_forecast):
         week = add_week(week, 1)
         df.loc[week] = df.tail(1).values[0]
@@ -54,14 +57,26 @@ def smpExpSmoth(df, num_of_forecast):
     return df
 
 
-def seasonalExp_smoothing(df, week_to_predict=1):
+def seasonalExp_smoothing(df, week_to_predict=1, decompositon=False):
     dateiso = []
     for week in df.index:
         dateiso.append(dateutil.parser.isoparse(week))
     dateiso = pd.DatetimeIndex(dateiso).to_period('W')
+    # df_bc = box_cox_transformation(df.copy(), 0.1)
     series = pd.Series(data=df['vendite'].values, index=dateiso)
-    model = ExponentialSmoothing(series, seasonal_periods=26, seasonal='add', initialization_method="estimated").fit()
-    predict = model.forecast(week_to_predict)
+
+    if decompositon:
+        model = STLForecast(series, ExponentialSmoothing, period=26,
+                            model_kwargs=dict(seasonal_periods=26, seasonal='add', initialization_method="estimated",
+                                              use_boxcox=False))
+        model_fitted = model.fit()
+        predict = model_fitted.forecast(week_to_predict)
+    else:
+        model = ExponentialSmoothing(series, seasonal_periods=26, seasonal='add',
+                                     initialization_method='estimated', use_boxcox=False)
+        model_fitted = model.fit()
+        # predict = box_cox_transformation(model_fitted.forecast(week_to_predict), 0.1, reverse=True)
+        predict = model_fitted.forecast(week_to_predict)
     week = df.index[df.index.size - 1]
     for i in range(0, week_to_predict):
         week = add_week(week, 1)
@@ -72,13 +87,14 @@ def seasonalExp_smoothing(df, week_to_predict=1):
 def sarima_forecast_test(history, config):
     order, sorder, trend = config
     # define model
-    model = SARIMAX(history, order=order, seasonal_order=sorder, trend=trend, enforce_stationarity=False, enforce_invertibility=False)
+    model = SARIMAX(history, order=order, seasonal_order=sorder, trend=trend, enforce_stationarity=False,
+                    enforce_invertibility=False)
     model_fit = model.fit(disp=False)
     yhat = model_fit.predict(len(history), len(history))
     return yhat[0]
 
 
-def sarima_forecast(df, config, weektopredict=1):
+def sarima_forecast(df, config, weektopredict=1, decomposition=False):
     dateiso = []
     for week in df.index:
         dateiso.append(dateutil.parser.isoparse(week))
@@ -89,16 +105,38 @@ def sarima_forecast(df, config, weektopredict=1):
     sorder = config[1]
     trend = config[2]
 
-    model = SARIMAX(series, order=order, seasonal_order=sorder, trend=trend, enforce_stationarity=True, enforce_invertibility=True)
-    model_fit = model.fit(disp=False)
-    predict = model_fit.get_prediction()
-    week = df.index[df.index.size - 1]
-    for i in range(0, weektopredict):
-        week = add_week(week, 1)
-        df.loc[week] = predict.predicted_mean.iloc[i]
+    if decomposition:
+        stlf = STLForecast(series, SARIMAX, period=26, model_kwargs=dict(order=order, seasonal_order=sorder, trend=trend))
+        stlf_fitted = stlf.fit()
+        predict = stlf_fitted.forecast(weektopredict)
+        week = df.index[df.index.size - 1]
+        for i in range(0, weektopredict):
+            week = add_week(week, 1)
+            df.loc[week] = predict.iloc[i]
+    else:
+        model = SARIMAX(series, order=order, seasonal_order=sorder, trend=trend)
+        model_fit = model.fit(disp=False)
+        predict = model_fit.forecast(weektopredict)
+        week = df.index[df.index.size - 1]
+        for i in range(0, weektopredict):
+            week = add_week(week, 1)
+            df.loc[week] = predict.predicted_mean.iloc[i]
     return df
+
+
+# method puo' essere "STL" per una decomposizione di Loess o "CL" per una decomposizione classica
+def decompose(df, method='STL'):
+    if method == 'STL':
+        stl_object = STL(df, period=26, seasonal=7, robust=True, seasonal_deg=1)
+        stl_fitted = stl_object.fit()
+        stl_fitted.plot()
+        return stl_fitted.trend, stl_fitted.seasonal, stl_fitted.resid
+    elif method == 'CL':
+        stl_object = seasonal_decompose(df, period=26)
+        stl_object.plot()
+        return stl_object.trend, stl_object.seasonal, stl_object.resid
 
 
 def aggregate_models(models):
     df = sum(models)/len(models)
-    return df
+
