@@ -51,7 +51,7 @@ def main():
     plot_dataframe(df_d, test, plot_name="Drift", forecasting_indexes=forecast_index)
 
     # Seasonal Exp Smoothing
-    df_hw = seasonalExp_smoothing(train.copy(), len(test.index))
+    df_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False)
     plot_dataframe(df_hw, test, plot_name="Holt-Winters", forecasting_indexes=forecast_index)
 
     # Simple Exp Smoothing
@@ -61,14 +61,14 @@ def main():
     # Sarima
     # test score model
     # Score Model Sarima
-    scores = grid_search(train['vendite'].copy().values.tolist(), sarima_configs(), n_test=10)
+    scores = grid_search(train['vendite'].copy().values.tolist(), sarima_configs(), n_test=3) #10
     # List top 3 configs
     print('Top 3:')
     for cfg, error in scores[:3]:
         print(cfg, error)
 
     cfg = ast.literal_eval(cfg)
-    df_sar = sarima_forecast(train.copy(), cfg, len(test.index))
+    df_sar = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=False)
     plot_dataframe(df_sar, test, plot_name='Arima', forecasting_indexes=forecast_index)
 
     print('Best method: ' + evaluate_simple_forecasts(train, test, 'vendite', cfg))

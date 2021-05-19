@@ -57,25 +57,28 @@ def smpExpSmoth(df, num_of_forecast):
     return df
 
 
-def seasonalExp_smoothing(df, week_to_predict=1, decompositon=False):
+def seasonalExp_smoothing(df, week_to_predict=1, decompositon=False, box_cox=False):
     dateiso = []
     for week in df.index:
         dateiso.append(dateutil.parser.isoparse(week))
     dateiso = pd.DatetimeIndex(dateiso).to_period('W')
-    # df_bc = box_cox_transformation(df.copy(), 0.1)
-    series = pd.Series(data=df['vendite'].values, index=dateiso)
+    df_bc = box_cox_transformation(df.copy(), 0.1)
+    if box_cox:
+        series = pd.Series(data=df_bc['vendite'].values, index=dateiso)
+    else:
+        series = pd.Series(data=df['vendite'].values, index=dateiso)
 
     if decompositon:
         model = STLForecast(series, ExponentialSmoothing, period=26,
-                            model_kwargs=dict(seasonal_periods=26, seasonal='add', initialization_method="estimated",
-                                              use_boxcox=False))
+                            model_kwargs=dict(seasonal_periods=26, seasonal='add', initialization_method="estimated"))
         model_fitted = model.fit()
-        predict = model_fitted.forecast(week_to_predict)
     else:
         model = ExponentialSmoothing(series, seasonal_periods=26, seasonal='add',
-                                     initialization_method='estimated', use_boxcox=False)
+                                     initialization_method='estimated')
         model_fitted = model.fit()
-        # predict = box_cox_transformation(model_fitted.forecast(week_to_predict), 0.1, reverse=True)
+    if box_cox:
+        predict = box_cox_transformation(model_fitted.forecast(week_to_predict), 0.1, reverse=True)
+    else:
         predict = model_fitted.forecast(week_to_predict)
     week = df.index[df.index.size - 1]
     for i in range(0, week_to_predict):
@@ -94,33 +97,36 @@ def sarima_forecast_test(history, config):
     return yhat[0]
 
 
-def sarima_forecast(df, config, weektopredict=1, decomposition=False):
+def sarima_forecast(df, config, weektopredict=1, decomposition=False, box_cox=False):
     dateiso = []
     for week in df.index:
         dateiso.append(dateutil.parser.isoparse(week))
     dateiso = pd.DatetimeIndex(dateiso).to_period('W')
-    series = pd.Series(data=df['vendite'].values, index=dateiso)
+    df_bc = box_cox_transformation(df.copy(), 0.1)
+    if box_cox:
+        series = pd.Series(data=df_bc['vendite'].values, index=dateiso)
+    else:
+        series = pd.Series(data=df['vendite'].values, index=dateiso)
     config = list(config)
     order = config[0]
     sorder = config[1]
     trend = config[2]
 
     if decomposition:
-        stlf = STLForecast(series, SARIMAX, period=26, model_kwargs=dict(order=order, seasonal_order=sorder, trend=trend))
-        stlf_fitted = stlf.fit()
-        predict = stlf_fitted.forecast(weektopredict)
-        week = df.index[df.index.size - 1]
-        for i in range(0, weektopredict):
-            week = add_week(week, 1)
-            df.loc[week] = predict.iloc[i]
+        model = STLForecast(series, SARIMAX, period=26,
+                            model_kwargs=dict(order=order, seasonal_order=sorder, trend=trend))
+        model_fit = model.fit(disp=False)
     else:
         model = SARIMAX(series, order=order, seasonal_order=sorder, trend=trend)
         model_fit = model.fit(disp=False)
-        predict = model_fit.forecast(weektopredict)
-        week = df.index[df.index.size - 1]
-        for i in range(0, weektopredict):
-            week = add_week(week, 1)
-            df.loc[week] = predict.predicted_mean.iloc[i]
+    if box_cox:
+        predict = box_cox_transformation(model_fit.get_prediction(), 2, reverse=True)
+    else:
+        predict = model_fit.get_prediction()
+    week = df.index[df.index.size - 1]
+    for i in range(0, weektopredict):
+        week = add_week(week, 1)
+        df.loc[week] = predict.predicted_mean.iloc[i]
     return df
 
 
