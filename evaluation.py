@@ -8,6 +8,8 @@ from math import sqrt
 
 from joblib import Parallel, delayed
 from sklearn.metrics import mean_squared_error
+
+from dataPreparation import datasplitter
 from forecasting import *
 
 
@@ -180,7 +182,7 @@ def walk_forward_validation(data, n_test, cfg):
     train, test = datasplitter(data, n_test)
     history = [x for x in train]
     for i in range(len(test)):
-        sarima = sarima_forecast_test(history, cfg)
+        sarima = sarima_forecast_test(history, cfg, week_to_predict=len(test.index))
         predictions.append(sarima)
         history.append(test[i])
     error = measure_rmse(test, predictions)
@@ -240,6 +242,7 @@ def sarima_configs(seasonal=[0]):
                                     cfg = [(p, d, q), (P, D, Q, m), t]
                                     models.append(cfg)
     return models
+
 
 def best_aggregate_config(models,test):
     error_dict = {}

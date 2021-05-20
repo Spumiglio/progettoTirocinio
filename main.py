@@ -1,12 +1,13 @@
+import numpy as np
 from matplotlib import pyplot
 from statsmodels.graphics.tsaplots import plot_acf
 
+from dataPreparation import sommavendite, best20color, datetoweek, filter_by_color, weeksdistrubution, \
+    fill_missing_data, data_splitter
 from plotter import *
 from evaluation import *
 import ast
 from scipy import stats
-from dataPreparation import *
-
 
 def main():
     dativendita = pd.read_csv("students_dataset_attr.csv").sort_values(by=["giorno_uscita"])
@@ -56,7 +57,7 @@ def main():
     plot_dataframe(df_d, test, plot_name="Drift", forecasting_indexes=forecast_index)
 
     # Seasonal Exp Smoothing
-    df_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=True)
+    df_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=True, rmv_outliers=False)
     plot_dataframe(df_hw, test, plot_name="Holt-Winters", forecasting_indexes=forecast_index)
 
     # Simple Exp Smoothing

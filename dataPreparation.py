@@ -1,5 +1,4 @@
 
-from forecasting import *
 from datetime import *
 from datetime import timedelta
 
@@ -8,6 +7,7 @@ import numpy as np
 import pandas as pd
 from math import log, exp
 from sklearn.model_selection import train_test_split
+from scipy import stats
 
 
 
@@ -149,3 +149,13 @@ def insert_new_row(df, pos, index, value):
     df2 = df[pos:]
     df1.loc[index] = value
     return pd.concat([df1, df2])
+
+
+# def remove_outliers(train, test):
+#     train_t = train[(np.abs(stats.zscore(train)) < 3).all(axis=1)]
+#     test_t = test[(np.abs(stats.zscore(test)) < 3).all(axis=1)]
+#     return train_t, test_t
+
+
+def remove_outliers(df):
+    return df[(np.abs(stats.zscore(df)) < 3).all(axis=1)]
