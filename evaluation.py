@@ -182,7 +182,7 @@ def walk_forward_validation(data, n_test, cfg):
     train, test = datasplitter(data, n_test)
     history = [x for x in train]
     for i in range(len(test)):
-        sarima = sarima_forecast_test(history, cfg, week_to_predict=len(test.index))
+        sarima = sarima_forecast_test(history, cfg)
         predictions.append(sarima)
         history.append(test[i])
     error = measure_rmse(test, predictions)

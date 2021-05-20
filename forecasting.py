@@ -96,8 +96,9 @@ def sarima_forecast_test(history, config, week_to_predict=1):
     model = SARIMAX(history, order=order, seasonal_order=sorder, trend=trend, enforce_stationarity=False,
                     enforce_invertibility=False)
     model_fit = model.fit(disp=False)
-    yhat = model_fit.get_prediction(len(history), len(history))  # TODO get_prediction() non va bene!
+    yhat = model_fit.predict(len(history), len(history))  # TODO get_prediction() non va bene!
     return yhat[0]
+
 
 
 def sarima_forecast(df, config, weektopredict=1, decomposition=False, box_cox=False):
