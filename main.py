@@ -42,7 +42,6 @@ def main():
     df_avg = average_forecasting(train.copy(), last_week, week_to_forecast=len(test.index))
     plot_dataframe(df_avg, test, plot_name="Average", forecasting_indexes=forecast_index)
 
-
     # Seasonal Naive
     df_sn = seasonal_naive_forecasting(train.copy(), last_week, 26, 1, week_to_forecast=len(test.index))
     plot_dataframe(df_sn, test, plot_name="Seasonal Naive", forecasting_indexes=forecast_index)
@@ -76,12 +75,13 @@ def main():
     df_sar = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=False)
     plot_dataframe(df_sar, test, plot_name='Arima', forecasting_indexes=forecast_index)
 
-    print('Best method: ' + evaluate_simple_forecasts(train, test, 'vendite', cfg))
-
     # Aggregate Testing
-    models = [df_hw, df_sn]
+    models = [df_hw, df_d]
     aggregate = aggregate_models(models)
     plot_dataframe(aggregate, test, plot_name="Aggregate", forecasting_indexes=forecast_index)
+
+    print('Best method: ' + evaluate_simple_forecasts(train, test, 'vendite', cfg, models))
+
 
 
 if __name__ == '__main__':

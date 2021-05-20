@@ -63,8 +63,8 @@ def prediction_interval(forecast_series, c=95):
     return forecast_series - (c_s[c] * stdev(forecast_series)), forecast_series + (c_s[c] * stdev(forecast_series))
 
 
-def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season=26):
-    # naive
+def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,models,season=26):
+    # Naive
     df_train_copy = df_train.copy()
     naive_errors = {}
     last_week = df_train_copy.index[df_train_copy.index.size - 1]
@@ -74,7 +74,7 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season
     # naive_errors['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
     naive_errors['MASE'] = mase(df_train_copy[data_column_name], df_test[data_column_name])
 
-    # seasonal naive
+    # Seasonal naive
     df_train_copy = df_train.copy()
     seasonal_naive_errors = {}
     last_week = df_train_copy.index[df_train_copy.index.size - 1]
@@ -84,7 +84,7 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season
     # seasonal_naive_errors['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
     seasonal_naive_errors['MASE'] = mase(df_train_copy[data_column_name], df_test[data_column_name])
 
-    # average
+    # Average
     df_train_copy = df_train.copy()
     average_errors = {}
     last_week = df_train_copy.index[df_train_copy.index.size - 1]
@@ -94,7 +94,7 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season
     # average_errors['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
     average_errors['MASE'] = mase(df_train_copy[data_column_name], df_test[data_column_name])
 
-    # drift
+    # Drift
     df_train_copy = df_train.copy()
     drift_errors = {}
     last_week = df_train_copy.index[df_train_copy.index.size - 1]
@@ -122,6 +122,13 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season
     # simple_ets_error['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
     simple_ets_error['MASE'] = mase(df_train_copy[data_column_name], df_test[data_column_name])
 
+    # Aggregate Models
+    aggregate_error = {}
+    df_aggregate = aggregate_models(models)
+    aggregate_error['MAE'] = mae(df_aggregate[data_column_name],df_test[data_column_name])
+    aggregate_error['RMSE'] = rmse(df_aggregate[data_column_name],df_test[data_column_name])
+    aggregate_error['MASE'] = mase(df_aggregate[data_column_name],df_test[data_column_name])
+
     # Sarima
     df_train_copy = df_train.copy()
     sarima_ets_error = {}
@@ -143,6 +150,8 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,season
                           simple_ets_error['MASE']]),
               'SRM':  sum([sarima_ets_error['MAE'], sarima_ets_error['RMSE'],
                           sarima_ets_error['MASE']]),
+              'AGG': sum([aggregate_error['MAE'], aggregate_error['RMSE'],
+                          aggregate_error['MASE']]),
               }
     print(errors)
     keys = list(errors.keys())
