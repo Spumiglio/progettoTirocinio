@@ -5,6 +5,8 @@ import pandas as pd
 import ast
 from matplotlib import pyplot
 from statsmodels.graphics.tsaplots import plot_acf
+from statsmodels.tsa.seasonal import STL
+from scipy import stats
 
 def main():
     dativendita = pd.read_csv("students_dataset_attr.csv").sort_values(by=["giorno_uscita"])
@@ -30,8 +32,11 @@ def main():
     plot_acf(train, title="autocorrelazione train", lags=None)
     pyplot.show()
 
-    # Average
     last_week = train.index[train.index.size - 1]
+
+    # Rimozione Outliers
+    train = train[(np.abs(stats.zscore(train)) < 3).all(axis=1)]
+    test = test[(np.abs(stats.zscore(test)) < 3).all(axis=1)]
 
     # Average
     df_avg = average_forecasting(train.copy(), last_week, week_to_forecast=len(test.index))
@@ -74,7 +79,7 @@ def main():
     print('Best method: ' + evaluate_simple_forecasts(train, test, 'vendite', cfg))
 
     # Aggregate Testing
-    models = [df_hw, df_sn, df_sar]
+    models = [df_hw, df_sn]
     aggregate = aggregate_models(models)
     plot_dataframe(aggregate, test, plot_name="Aggregate", forecasting_indexes=forecast_index)
 
