@@ -1,3 +1,4 @@
+import itertools
 from multiprocessing import cpu_count
 from warnings import catch_warnings, filterwarnings
 
@@ -220,13 +221,13 @@ def grid_search(data, cfg_list, n_test):
 def sarima_configs(seasonal=[0]):
     models = list()
     # define config lists
-    p_params = [0, 1, 2,3,4,5]
+    p_params = [0, 1, 2, 3, 4, 5]
     d_params = [0, 1]
-    q_params = [0, 1, 2,3,4,5]
+    q_params = [0, 1, 2, 3, 4, 5]
     t_params = ['n', 'c', 't', 'ct']
-    P_params = [0, 1, 2,3,4,5]
+    P_params = [0, 1, 2, 3, 4, 5]
     D_params = [0, 1]
-    Q_params = [0, 1, 2,3,4,5]
+    Q_params = [0, 1, 2, 3, 4, 5]
     m_params = seasonal
     # create config instances
     for p in p_params:
@@ -240,3 +241,24 @@ def sarima_configs(seasonal=[0]):
                                     cfg = [(p, d, q), (P, D, Q, m), t]
                                     models.append(cfg)
     return models
+
+def best_aggregate_config(models,test):
+    error_dict = {}
+    all_combinations = []
+    key_list = models.keys()
+
+    for r in range(len(key_list) + 1):
+        combinations_object = itertools.combinations(key_list, r)
+        combinations_list = list(combinations_object)
+        all_combinations += combinations_list
+    del all_combinations[:8]
+
+    for combination in all_combinations:
+        comb = list(combination)
+        df_list = [models[x] for x in comb]
+        df = aggregate_models(df_list)
+        error = mae(df['vendite'], test['vendite'])
+        error_dict[combination] = error
+    keys = list(error_dict.keys())
+    vals = list(error_dict.values())
+    return keys[vals.index(min(vals))]

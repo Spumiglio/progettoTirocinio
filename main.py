@@ -8,6 +8,7 @@ from statsmodels.graphics.tsaplots import plot_acf
 from statsmodels.tsa.seasonal import STL
 from scipy import stats
 
+
 def main():
     dativendita = pd.read_csv("students_dataset_attr.csv").sort_values(by=["giorno_uscita"])
     dativendita = sommavendite(dativendita)
@@ -65,7 +66,7 @@ def main():
     # Sarima
     # test score model
     # Score Model Sarima
-    scores = grid_search(train['vendite'].copy().values.tolist(), sarima_configs(), n_test=3) #10
+    scores = grid_search(train['vendite'].copy().values.tolist(), sarima_configs(), n_test=3)  # 10
     # List top 3 configs
     print('Top 3:')
     for cfg, error in scores[:3]:
@@ -76,12 +77,18 @@ def main():
     plot_dataframe(df_sar, test, plot_name='Arima', forecasting_indexes=forecast_index)
 
     # Aggregate Testing
-    models = [df_hw, df_d]
-    aggregate = aggregate_models(models)
+    df_dict = {'df_avg': df_avg, 'df_sn': df_sn, 'df_n': df_n, 'df_d': df_d,
+               'df_hw': df_hw, 'df_ses': df_ses, 'df_sar': df_sar}
+    agg_cfg = best_aggregate_config(df_dict, test)
+    cfg_string = str(agg_cfg)
+    print("Best Aggregate config: " + cfg_string)
+
+    models = list(agg_cfg)
+    df_list = [df_dict[x] for x in models]
+    aggregate = aggregate_models(df_list)
     plot_dataframe(aggregate, test, plot_name="Aggregate", forecasting_indexes=forecast_index)
 
-    print('Best method: ' + evaluate_simple_forecasts(train, test, 'vendite', cfg, models))
-
+    print('Best method: ' + evaluate_simple_forecasts(train, test, 'vendite', cfg, df_list))
 
 
 if __name__ == '__main__':
