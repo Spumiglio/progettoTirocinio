@@ -2,7 +2,6 @@ import itertools
 from multiprocessing import cpu_count
 from warnings import catch_warnings, filterwarnings
 
-import pandas as pd
 from statistics import mean
 from statistics import stdev
 from math import sqrt

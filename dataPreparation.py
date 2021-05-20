@@ -1,5 +1,4 @@
-from math import log
-from math import exp
+
 from forecasting import *
 from datetime import *
 from datetime import timedelta
@@ -10,7 +9,7 @@ import pandas as pd
 from math import log, exp
 from sklearn.model_selection import train_test_split
 
-from forecasting import *
+
 
 
 def filter_by_color(df, color):

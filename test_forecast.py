@@ -1,8 +1,5 @@
-import numpy as np
-import pandas as pd
-from scipy.stats import stats
 
-from dataPreparation import sommavendite, best20color, datetoweek, filter_by_color, weeksdistrubution, data_splitter
+from scipy.stats import stats
 from forecasting import *
 from plotter import plot_dataframe
 
