@@ -145,4 +145,4 @@ def decompose(df, method='STL'):
 
 def aggregate_models(models):
     df = sum(models)/len(models)
-
+    return df
