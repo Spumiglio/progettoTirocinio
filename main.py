@@ -15,7 +15,7 @@ def main():
     dativendita = best20color(dativendita)
     datetoweek(dativendita)
 
-    dativendita = filter_by_color(dativendita, 'nero')
+    dativendita = filter_by_color(dativendita, 'giallo')
     dativendita_colore = weeksdistrubution(dativendita)
 
     dativendita_colore = fill_missing_data(dativendita_colore, start=dativendita_colore.index[0],
