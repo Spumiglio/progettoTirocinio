@@ -156,19 +156,6 @@ def main():
         cfg = ast.literal_eval(cfg)
         forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0.1)
         plot_dataframe(forecast_sa, test, plot_name="SARIMA", forecasting_indexes=train.index.size - 1)
-
-        # Aggregated forecasting
-        forecast_driftict = {'forecast_avg': forecast_avg, 'forecast_sn': forecast_sn, 'forecast_naive': forecast_naive,
-                             'forecast_drift': forecast_drift,
-                             'forecast_hw': forecast_hw, 'forecast_ses': forecast_ses, 'forecast_sa': forecast_sa}
-        agg_cfg = best_aggregate_config(forecast_driftict, test)
-        cfg_string = str(agg_cfg)
-        print("Best Aggregate config: " + cfg_string)
-
-        models = list(agg_cfg)
-        df_list = [forecast_driftict[x] for x in models]
-        aggregate = aggregate_models(df_list)
-        plot_dataframe(aggregate, test, plot_name="Aggregate", forecasting_indexes=forecast_index)
     elif colore == 'nero':
         # Holt-Winters
         forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=0)
@@ -276,8 +263,8 @@ def main():
         forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0.1)
         plot_dataframe(forecast_sa, test, plot_name="SARIMA", forecasting_indexes=train.index.size - 1)
 
-    forecast_driftict = {'forecast_avg': forecast_avg, 'forecast_sn': forecast_sn, 'forecast_naive': forecast_naive,
-                         'forecast_drift': forecast_drift,
+    forecast_driftict = {'forecast_avg': forecast_avg, 'forecast_sn': forecast_sn,
+                         'forecast_naive': forecast_naive, 'forecast_drift': forecast_drift,
                          'forecast_hw': forecast_hw, 'forecast_ses': forecast_ses, 'forecast_sa': forecast_sa}
     df_list = [forecast_driftict[x] for x in list(best_aggregate_config(forecast_driftict, test))]
     aggregate = aggregate_models(df_list)
