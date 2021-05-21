@@ -58,18 +58,18 @@ def smpExpSmoth(df, num_of_forecast):
     return df
 
 
-def seasonalExp_smoothing(df, week_to_predict=1, decompositon=False, box_cox=False, rmv_outliers=True):
+def seasonalExp_smoothing(df, week_to_predict=1, decompositon=False, box_cox=0, rmv_outliers=True):
     dateiso = []
     for week in df.index:
         dateiso.append(dateutil.parser.isoparse(week))
     dateiso = pd.DatetimeIndex(dateiso).to_period('W')
-    df_bc = box_cox_transformation(df.copy(), 0.1)
-    if box_cox:
-        series = pd.Series(data=df_bc['vendite'].values, index=dateiso)
-    else:
-        series = pd.Series(data=df['vendite'].values, index=dateiso)
+
+    df_o = df.copy()
     if rmv_outliers:
-        series = remove_outliers(df)
+        df_o = remove_outliers(df)
+    if box_cox != 0:
+        df_o = box_cox_transformation(df_o.copy(), box_cox)
+    series = pd.Series(data=df_o['vendite'].values, index=dateiso)
 
     if decompositon:
         model = STLForecast(series, ExponentialSmoothing, period=26,
@@ -79,8 +79,8 @@ def seasonalExp_smoothing(df, week_to_predict=1, decompositon=False, box_cox=Fal
         model = ExponentialSmoothing(series, seasonal_periods=26, seasonal='add',
                                      initialization_method='estimated')
         model_fitted = model.fit()
-    if box_cox:
-        predict = box_cox_transformation(model_fitted.forecast(week_to_predict), 0.1, reverse=True)
+    if box_cox != 0:
+        predict = box_cox_transformation(model_fitted.forecast(week_to_predict), box_cox, reverse=True)
     else:
         predict = model_fitted.forecast(week_to_predict)
     week = df.index[df.index.size - 1]
@@ -90,7 +90,7 @@ def seasonalExp_smoothing(df, week_to_predict=1, decompositon=False, box_cox=Fal
     return df
 
 
-def sarima_forecast_test(history, config, week_to_predict=1):
+def sarima_forecast_test(history, config):
     order, sorder, trend = config
     # define model
     model = SARIMAX(history, order=order, seasonal_order=sorder, trend=trend, enforce_stationarity=False,
@@ -100,17 +100,18 @@ def sarima_forecast_test(history, config, week_to_predict=1):
     return yhat[0]
 
 
-
-def sarima_forecast(df, config, weektopredict=1, decomposition=False, box_cox=False):
+def sarima_forecast(df, config, weektopredict=1, decomposition=False, box_cox=0, rmv_outliers=True):
     dateiso = []
     for week in df.index:
         dateiso.append(dateutil.parser.isoparse(week))
     dateiso = pd.DatetimeIndex(dateiso).to_period('W')
-    df_bc = box_cox_transformation(df.copy(), 0.1)
-    if box_cox:
-        series = pd.Series(data=df_bc['vendite'].values, index=dateiso)
-    else:
-        series = pd.Series(data=df['vendite'].values, index=dateiso)
+
+    df_o = df.copy()
+    if rmv_outliers:
+        df_o = remove_outliers(df)
+    if box_cox != 0:
+        df_o = box_cox_transformation(df_o.copy(), box_cox)
+    series = pd.Series(data=df_o['vendite'].values, index=dateiso)
     config = list(config)
     order = config[0]
     sorder = config[1]
@@ -123,8 +124,8 @@ def sarima_forecast(df, config, weektopredict=1, decomposition=False, box_cox=Fa
     else:
         model = SARIMAX(series, order=order, seasonal_order=sorder, trend=trend)
         model_fit = model.fit(disp=False)
-    if box_cox:
-        predict = box_cox_transformation(model_fit.forecast(weektopredict), 0.1, reverse=True)
+    if box_cox != 0:
+        predict = box_cox_transformation(model_fit.forecast(weektopredict), box_cox, reverse=True)
     else:
         predict = model_fit.forecast(weektopredict)
     week = df.index[df.index.size - 1]

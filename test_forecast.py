@@ -55,7 +55,7 @@ def main():
         plot_dataframe(forecast_sa, test, plot_name="SARIMA", forecasting_indexes=train.index.size - 1)
     elif colore == 'nero':
         # Holt-Winters
-        forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=False)
+        forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=0)
         plot_dataframe(forecast_hw, test, plot_name="Holt-Winters", forecasting_indexes=train.index.size - 1)
 
         # SARIMA
@@ -63,11 +63,11 @@ def main():
         for cfg, error in scores[:3]:
             pass
         cfg = ast.literal_eval(cfg)
-        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=False)
+        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0)
         plot_dataframe(forecast_sa, test, plot_name="SARIMA", forecasting_indexes=train.index.size - 1)
     elif colore == 'rosa':
         # Holt-Winters
-        forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=True, box_cox=False)
+        forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=True, box_cox=0)
         plot_dataframe(forecast_hw, test, plot_name="Holt-Winters", forecasting_indexes=train.index.size - 1)
 
         # SARIMA
@@ -75,11 +75,11 @@ def main():
         for cfg, error in scores[:3]:
             pass
         cfg = ast.literal_eval(cfg)
-        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=False)
+        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0)
         plot_dataframe(forecast_sa, test, plot_name="SARIMA", forecasting_indexes=train.index.size - 1)
     elif colore == 'bianco':
         # Holt-Winters
-        forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=True,
+        forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=0.1,
                                             rmv_outliers=False)
         plot_dataframe(forecast_hw, test, plot_name="Holt-Winters", forecasting_indexes=train.index.size - 1)
 
@@ -88,12 +88,12 @@ def main():
         for cfg, error in scores[:3]:
             pass
         cfg = ast.literal_eval(cfg)
-        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=False,
+        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0,
                                       rmv_outliers=False)
         plot_dataframe(forecast_sa, test, plot_name="SARIMA", forecasting_indexes=train.index.size - 1)
     elif colore == 'jeans':
         # Holt-Winters
-        forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=False,
+        forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=0,
                                             rmv_outliers=False)
         plot_dataframe(forecast_hw, test, plot_name="Holt-Winters", forecasting_indexes=train.index.size - 1)
 
@@ -102,30 +102,30 @@ def main():
         for cfg, error in scores[:3]:
             pass
         cfg = ast.literal_eval(cfg)
-        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=False)
+        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0)
         plot_dataframe(forecast_sa, test, plot_name="SARIMA", forecasting_indexes=train.index.size - 1)
     elif colore == 'beige':
-        forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=True, box_cox=False)
+        forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=True, box_cox=0)
         plot_dataframe(forecast_hw, test, plot_name="Holt-Winters", forecasting_indexes=train.index.size - 1)
 
         scores = grid_search(train['vendite'].copy().values.tolist(), sarima_configs(), n_test=3)
         for cfg, error in scores[:3]:
             pass
         cfg = ast.literal_eval(cfg)
-        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=False)
+        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0)
         plot_dataframe(forecast_sa, test, plot_name="SARIMA", forecasting_indexes=train.index.size - 1)
     elif colore == 'grigio':
-        forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=False)
+        forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=0)
         plot_dataframe(forecast_hw, test, plot_name="Holt-Winters", forecasting_indexes=train.index.size - 1)
 
         scores = grid_search(train['vendite'].copy().values.tolist(), sarima_configs(), n_test=3)
         for cfg, error in scores[:3]:
             pass
         cfg = ast.literal_eval(cfg)
-        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=False, box_cox=False)
+        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=False, box_cox=0)
         plot_dataframe(forecast_sa, test, plot_name="SARIMA", forecasting_indexes=train.index.size - 1)
     elif colore == 'verde militare':
-        forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=True,
+        forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=0.1,
                                             rmv_outliers=False)
         plot_dataframe(forecast_hw, test, plot_name="Holt-Winters", forecasting_indexes=train.index.size - 1)
 
@@ -134,10 +134,10 @@ def main():
             pass
         cfg = ast.literal_eval(cfg)
         # TODO continua a dare valori negativi: scegliere il lambda giusto
-        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=False)
+        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0)
         plot_dataframe(forecast_sa, test, plot_name="SARIMA", forecasting_indexes=train.index.size - 1)
     elif colore == 'rosso':
-        forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=False,
+        forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=0,
                                             rmv_outliers=False)
         plot_dataframe(forecast_hw, test, plot_name="Holt-Winters", forecasting_indexes=train.index.size - 1)
 
@@ -145,11 +145,11 @@ def main():
         for cfg, error in scores[:3]:
             pass
         cfg = ast.literal_eval(cfg)
-        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=False,
+        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0,
                                       rmv_outliers=False)
         plot_dataframe(forecast_sa, test, plot_name="SARIMA", forecasting_indexes=train.index.size - 1)
     elif colore == 'verde':
-        forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=True,
+        forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=0.1,
                                             rmv_outliers=False)
         plot_dataframe(forecast_hw, test, plot_name="Holt-Winters", forecasting_indexes=train.index.size - 1)
 
@@ -158,7 +158,7 @@ def main():
             pass
         cfg = ast.literal_eval(cfg)
         # TODO non va bene!
-        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=True,
+        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0.1,
                                       rmv_outliers=True)
         plot_dataframe(forecast_sa, test, plot_name="SARIMA", forecasting_indexes=train.index.size - 1)
 

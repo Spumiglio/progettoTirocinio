@@ -74,7 +74,7 @@ def main():
         print(cfg, error)
 
     cfg = ast.literal_eval(cfg)
-    df_sar = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=True)
+    df_sar = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0)
     plot_dataframe(df_sar, test, plot_name='Arima', forecasting_indexes=forecast_index)
 
     # Aggregate Config Test
