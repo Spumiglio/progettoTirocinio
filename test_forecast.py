@@ -286,7 +286,7 @@ def main():
     print('\nBest method: ' + list(errors.keys())[list(errors.values()).index(min(list(errors.values())))])
 
     weight = model_weighted(forecast_driftict, test)
-    weighted = aggregate_weighted(weight, forecast_driftict, forecast_index)
+    weighted = aggregate_weighted(weight, forecast_driftict)
     plot_dataframe(weighted, test, plot_name="Aggregate Weighted: " + colore, forecasting_indexes=forecast_index)
 
 def prepare_data(colore):
