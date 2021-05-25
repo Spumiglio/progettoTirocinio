@@ -152,24 +152,17 @@ def insert_new_row(df, pos, index, value):
     return pd.concat([df1, df2])
 
 
-# def remove_outliers(train, test):
-#     train_t = train[(np.abs(stats.zscore(train)) < 3).all(axis=1)]
-#     test_t = test[(np.abs(stats.zscore(test)) < 3).all(axis=1)]
-#     return train_t, test_t
-
-
-# method puo' essere 'A' se gli outliers vanno sostituiti con la media, altrimenti 'N' per sostituirli con NaN
 def remove_outliers(df, method='A'):
     df_c = df.copy()
     series = df_c['vendite']
-    threshold = 3
-    mean_1 = np.mean(df)['vendite']
-    std_1 = np.std(df)['vendite']
+    series = series.sort_values()
+    q1, q3 = np.percentile(series, [25, 75])
+    iqr = q3 - q1
+    upper_range = q3 + (4 * iqr)
 
     for i in series.index:
         y = series[i]
-        z_score = (y - mean_1) / std_1
-        if np.abs(z_score) > threshold:
+        if y > upper_range:
             if method == 'A':
                 prev = series[add_week(i, -1)]
                 next_ = series[add_week(i, 1)]
@@ -179,7 +172,25 @@ def remove_outliers(df, method='A'):
 
     return df_c
 
+
+# method puo' essere 'A' se gli outliers vanno sostituiti con la media, altrimenti 'N' per sostituirli con NaN
+# def remove_outliers(df, method='A'):
+#     df_c = df.copy()
+#     series = df_c['vendite']
+#     threshold = 3
+#     mean_1 = np.mean(df)['vendite']
+#     std_1 = np.std(df)['vendite']
 #
-# def remove_outliers(df):
-#     outliers = detect_outliers(df)
-#     return df[(np.abs(stats.zscore(df)) < 3).all(axis=1)]
+#     for i in series.index:
+#         y = series[i]
+#         z_score = (y - mean_1) / std_1
+#         if np.abs(z_score) > threshold:
+#             if method == 'A':
+#                 prev = series[add_week(i, -1)]
+#                 next_ = series[add_week(i, 1)]
+#                 df_c.loc[i] = (prev + next_) / 2
+#             elif method == 'N':
+#                 df_c.loc[i] = None
+#
+#     return df_c
+

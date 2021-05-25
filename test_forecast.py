@@ -237,8 +237,8 @@ def main():
         for cfg, error in scores[:3]:
             pass
         cfg = ast.literal_eval(cfg)
-        # TODO continua a dare valori negativi: scegliere il lambda giusto
-        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0)
+        forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0,
+                                      rmv_outliers=False)
         plot_dataframe(forecast_sa, test, plot_name="SARIMA", forecasting_indexes=train.index.size - 1)
     elif colore == 'rosso':
         forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=0,
