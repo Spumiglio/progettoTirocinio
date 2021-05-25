@@ -3,10 +3,11 @@ from dataPreparation import *
 from evaluation import *
 from forecasting import *
 from plotter import *
+from tabulate import tabulate
 
 
 def main():
-    colore = 'rosso'
+    colore = 'avion'
     cfg = None
     df = prepare_data(colore)
     train, test = data_splitter(df, int(len(df.index) * 0.2))
@@ -269,6 +270,20 @@ def main():
     df_list = [forecast_driftict[x] for x in list(best_aggregate_config(forecast_driftict, test))]
     aggregate = aggregate_models(df_list)
     plot_dataframe(aggregate, test, plot_name="Aggregate: " + colore, forecasting_indexes=forecast_index)
+
+    MAEl = []
+    RMSEl = []
+    MASEl = []
+    SUM_ERR = []
+    errors = evaluate_simple_forecasts(train, test, 'vendite', cfg, df_list)
+    for e in list(errors.values()):
+        MAEl.append(e[0])
+        RMSEl.append(e[1])
+        MASEl.append(e[2])
+        SUM_ERR.append(e[3])
+    print(tabulate({"ALGORITMO": list(errors.keys()), "MAE": MAEl, "RMSE": RMSEl, "MASE": MASEl, "SUM_ERR": SUM_ERR},
+                   headers="keys", tablefmt="github", numalign="right"))
+    print('\nBest method: ' + list(errors.keys())[list(errors.values()).index(min(list(errors.values())))])
 
 
 def prepare_data(colore):

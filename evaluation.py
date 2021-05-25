@@ -65,7 +65,7 @@ def prediction_interval(forecast_series, c=95):
     return forecast_series - (c_s[c] * stdev(forecast_series)), forecast_series + (c_s[c] * stdev(forecast_series))
 
 
-def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,models,season=26):
+def evaluate_simple_forecasts(df_train, df_test, data_column_name, config, models, season=26):
     # Naive
     df_train_copy = df_train.copy()
     naive_errors = {}
@@ -127,9 +127,9 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,models
     # Aggregate Models
     aggregate_error = {}
     df_aggregate = aggregate_models(models)
-    aggregate_error['MAE'] = mae(df_aggregate[data_column_name],df_test[data_column_name])
-    aggregate_error['RMSE'] = rmse(df_aggregate[data_column_name],df_test[data_column_name])
-    aggregate_error['MASE'] = mase(df_aggregate[data_column_name],df_test[data_column_name])
+    aggregate_error['MAE'] = mae(df_aggregate[data_column_name], df_test[data_column_name])
+    aggregate_error['RMSE'] = rmse(df_aggregate[data_column_name], df_test[data_column_name])
+    aggregate_error['MASE'] = mase(df_aggregate[data_column_name], df_test[data_column_name])
 
     # Sarima
     df_train_copy = df_train.copy()
@@ -140,25 +140,30 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config,models
     # sarima_ets_error['MAPE'] = mape(df_train_copy[data_column_name], df_test[data_column_name])
     sarima_ets_error['MASE'] = mase(df_train_copy[data_column_name], df_test[data_column_name])
 
-    errors = {'N': sum([naive_errors['MAE'], naive_errors['RMSE'], naive_errors['MASE']]),
-              'SN': sum([seasonal_naive_errors['MAE'], seasonal_naive_errors['RMSE'],
-                         seasonal_naive_errors['MASE']]),
-              'AVG': sum(
-                  [average_errors['MAE'], average_errors['RMSE'], average_errors['MASE']]),
-              'DR': sum([drift_errors['MAE'], drift_errors['RMSE'], drift_errors['MASE']]),
-              'HW': sum([holt_winter_errors['MAE'], holt_winter_errors['RMSE'],
-                         holt_winter_errors['MASE']]),
-              'SES': sum([simple_ets_error['MAE'], simple_ets_error['RMSE'],
-                          simple_ets_error['MASE']]),
-              'SRM':  sum([sarima_ets_error['MAE'], sarima_ets_error['RMSE'],
-                          sarima_ets_error['MASE']]),
-              'AGG': sum([aggregate_error['MAE'], aggregate_error['RMSE'],
-                          aggregate_error['MASE']]),
+    errors = {'N': [naive_errors['MAE'], naive_errors['RMSE'], naive_errors['MASE'],
+                    sum([naive_errors['MAE'], naive_errors['RMSE'], naive_errors['MASE']])],
+              'SN': [seasonal_naive_errors['MAE'], seasonal_naive_errors['RMSE'],
+                     seasonal_naive_errors['MASE'], sum([seasonal_naive_errors['MAE'], seasonal_naive_errors['RMSE'],
+                                                         seasonal_naive_errors['MASE']])],
+              'AVG': [average_errors['MAE'], average_errors['RMSE'], average_errors['MASE'], sum(
+                  [average_errors['MAE'], average_errors['RMSE'], average_errors['MASE']])],
+              'DR': [drift_errors['MAE'], drift_errors['RMSE'], drift_errors['MASE'],
+                     sum([drift_errors['MAE'], drift_errors['RMSE'], drift_errors['MASE']])],
+              'HW': [holt_winter_errors['MAE'], holt_winter_errors['RMSE'],
+                     holt_winter_errors['MASE'], sum([holt_winter_errors['MAE'], holt_winter_errors['RMSE'],
+                                                      holt_winter_errors['MASE']])],
+              'SES': [simple_ets_error['MAE'], simple_ets_error['RMSE'],
+                      simple_ets_error['MASE'], sum([simple_ets_error['MAE'], simple_ets_error['RMSE'],
+                                                     simple_ets_error['MASE']])],
+              'SRM': [sarima_ets_error['MAE'], sarima_ets_error['RMSE'],
+                      sarima_ets_error['MASE'], sum([sarima_ets_error['MAE'], sarima_ets_error['RMSE'],
+                                                     sarima_ets_error['MASE']])],
+              'AGG': [aggregate_error['MAE'], aggregate_error['RMSE'],
+                      aggregate_error['MASE'], sum([aggregate_error['MAE'], aggregate_error['RMSE'],
+                                                    aggregate_error['MASE']])],
               }
-    print(errors)
-    keys = list(errors.keys())
-    vals = list(errors.values())
-    return keys[vals.index(min(vals))]
+    # print(errors)
+    return errors
 
 
 def evaluate_sarima_forecasts(df):
@@ -244,7 +249,7 @@ def sarima_configs(seasonal=[0]):
     return models
 
 
-def best_aggregate_config(models,test):
+def best_aggregate_config(models, test):
     error_dict = {}
     all_combinations = []
     key_list = models.keys()
