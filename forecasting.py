@@ -120,7 +120,7 @@ def sarima_forecast(df, config, weektopredict=1, decomposition=False, box_cox=0,
     if decomposition:
         model = STLForecast(series, SARIMAX, period=26,
                             model_kwargs=dict(order=order, seasonal_order=sorder, trend=trend))
-        model_fit = model.fit()
+        model_fit = model.fit(fit_kwargs=dict(disp=False))
     else:
         model = SARIMAX(series, order=order, seasonal_order=sorder, trend=trend)
         model_fit = model.fit(disp=False)
