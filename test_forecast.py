@@ -266,10 +266,12 @@ def main():
     forecast_driftict = {'forecast_avg': forecast_avg, 'forecast_sn': forecast_sn,
                          'forecast_naive': forecast_naive, 'forecast_drift': forecast_drift,
                          'forecast_hw': forecast_hw, 'forecast_ses': forecast_ses, 'forecast_sa': forecast_sa}
-    df_list = [forecast_driftict[x] for x in list(best_aggregate_config(forecast_driftict, test))]
+    df_list = [forecast_driftict[x] for x in list(best_aggregate_config(forecast_driftict, test)[0])]
     aggregate = aggregate_models(df_list)
     plot_dataframe(aggregate, test, plot_name="Aggregate: " + colore, forecasting_indexes=forecast_index)
-
+    weight = model_weighted(forecast_driftict, test)
+    weighted = aggregate_weighted(weight, forecast_driftict, forecast_index)
+    plot_dataframe(weighted, test, plot_name="Aggregate Weighted: " + colore, forecasting_indexes=forecast_index)
 
 def prepare_data(colore):
     dativendita = pd.read_csv("students_dataset_attr.csv").sort_values(by=["giorno_uscita"])

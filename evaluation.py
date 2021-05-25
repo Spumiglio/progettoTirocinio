@@ -244,7 +244,7 @@ def sarima_configs(seasonal=[0]):
     return models
 
 
-def best_aggregate_config(models,test):
+def best_aggregate_config(models, test):
     error_dict = {}
     all_combinations = []
     key_list = models.keys()
@@ -261,6 +261,24 @@ def best_aggregate_config(models,test):
         df = aggregate_models(df_list)
         error = mae(df['vendite'], test['vendite'])
         error_dict[combination] = error
+
     keys = list(error_dict.keys())
     vals = list(error_dict.values())
-    return keys[vals.index(min(vals))]
+    return [keys[vals.index(min(vals))], error_dict]
+
+def model_weighted(models,test):
+    error_dict= {}
+    for model in models:
+        error = mae(models[model]['vendite'], test['vendite'])
+        error_dict[model] = error
+    alpha = {k: v for k, v in sorted(error_dict.items(), key=lambda item: item[1])}
+    keys = list(alpha.keys())
+    alpha[keys[0]] = 0.4
+    alpha[keys[1]] = 0.25
+    alpha[keys[2]] = 0.16
+    alpha[keys[3]] = 0.1
+    alpha[keys[4]] = 0.05
+    alpha[keys[5]] = 0.03
+    alpha[keys[6]] = 0.01
+
+    return alpha

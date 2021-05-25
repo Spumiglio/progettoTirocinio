@@ -15,7 +15,7 @@ def main():
     dativendita = best20color(dativendita)
     datetoweek(dativendita)
 
-    dativendita = filter_by_color(dativendita, 'giallo')
+    dativendita = filter_by_color(dativendita, 'fantasia')
     dativendita_colore = weeksdistrubution(dativendita)
 
     dativendita_colore = fill_missing_data(dativendita_colore, start=dativendita_colore.index[0],
@@ -89,6 +89,7 @@ def main():
     aggregate = aggregate_models(df_list)
     plot_dataframe(aggregate, test, plot_name="Aggregate", forecasting_indexes=forecast_index)
 
+    aggregate_weighted(agg_cfg)
     print('Best method: ' + evaluate_simple_forecasts(train, test, 'vendite', cfg, df_list))
 
 
