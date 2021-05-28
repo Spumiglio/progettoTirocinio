@@ -156,7 +156,6 @@ def aggregate_weighted(weights, modelsdict):
     somma = 0
     for mod in weights:
         somma += modelsdict[mod].tail(27)*weights[mod]
-    somma = somma/7
     for index, row in somma.iterrows():
         modelsdict['forecast_avg'].loc[index] = row["vendite"]
     return modelsdict['forecast_avg']
