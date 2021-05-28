@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 
 # type_of_plot puo' essere H = istogramma, B = barre, L = lineare
-def plot_dataframe(df, test, type_of_plot="L", plot_name="Vendite totali", forecasting_indexes=0):
+def plot_dataframe(df, test = 0, type_of_plot="L", plot_name="Vendite totali", forecasting_indexes=0):
     if type_of_plot == "L":
         df_temp = df.copy()
         x = df_temp.index

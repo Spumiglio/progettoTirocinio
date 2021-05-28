@@ -7,7 +7,7 @@ from tabulate import tabulate
 
 
 def main():
-    colore = 'piombo'
+    colore = 'nero'
     cfg = None
     df = prepare_data(colore)
     train, test = data_splitter(df, int(len(df.index) * 0.2))

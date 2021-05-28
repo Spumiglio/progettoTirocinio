@@ -159,17 +159,25 @@ def remove_outliers(df, method='A'):
     q1, q3 = np.percentile(series, [25, 75])
     iqr = q3 - q1
     upper_range = q3 + (4 * iqr)
-
+    head = df.head(1).index[0]
+    tail = df.tail(1).index[0]
     for i in series.index:
         y = series[i]
-        if y > upper_range:
+        if y > upper_range and i != head and i != tail:
             if method == 'A':
                 prev = series[add_week(i, -1)]
                 next_ = series[add_week(i, 1)]
                 df_c.loc[i] = (prev + next_) / 2
             elif method == 'N':
                 df_c.loc[i] = None
-
+        elif i == head:
+            if method == 'A':
+                next_ = series[add_week(i, 1)]
+                df_c.loc[i] = next_
+        elif i == tail:
+            if method == 'A':
+                prev = series[add_week(i, -1)]
+                df_c.loc[i] = prev
     return df_c
 
 
