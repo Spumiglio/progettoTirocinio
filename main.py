@@ -11,7 +11,7 @@ from scipy import stats
 
 
 def main():
-    colore = 'verde'
+    colore = 'fantasia'
     cfg = None
     train = prepare_data(colore)
     forecast_index = train.index.size - 1
@@ -273,7 +273,7 @@ def main():
     plot_dataframe(aggregate, plot_name="Aggregate: " + colore, forecasting_indexes=forecast_index)
 
     weight = {'forecast_hw': 0.4, 'forecast_sa': 0.25, 'forecast_drift': 0.16, 'forecast_ses': 0.1, 'forecast_naive': 0.05, 'forecast_avg': 0.03, 'forecast_sn': 0.01}
-    weighted = aggregate_weighted(weight, forecast_driftict)
+    weighted = aggregate_weighted(weight, forecast_driftict, week_to_forecast)
     plot_dataframe(weighted, plot_name="Aggregate Weighted: " + colore, forecasting_indexes=forecast_index)
 
 
