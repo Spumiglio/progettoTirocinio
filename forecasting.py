@@ -96,7 +96,7 @@ def sarima_forecast_test(history, config):
     model = SARIMAX(history, order=order, seasonal_order=sorder, trend=trend, enforce_stationarity=False,
                     enforce_invertibility=False)
     model_fit = model.fit(disp=False)
-    yhat = model_fit.predict(len(history), len(history))  # TODO get_prediction() non va bene!
+    yhat = model_fit.predict(len(history), len(history))
     return yhat[0]
 
 

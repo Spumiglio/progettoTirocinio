@@ -276,6 +276,7 @@ def main():
     weighted = aggregate_weighted(weight, forecast_driftict)
     plot_dataframe(weighted, plot_name="Aggregate Weighted: " + colore, forecasting_indexes=forecast_index)
 
+
 def prepare_data(colore):
     dativendita = pd.read_csv("students_dataset_attr.csv").sort_values(by=["giorno_uscita"])
     dativendita = sommavendite(dativendita)
