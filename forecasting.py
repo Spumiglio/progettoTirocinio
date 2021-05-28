@@ -152,10 +152,12 @@ def aggregate_models(models):
     df = sum(models)/len(models)
     return df
 
-def aggregate_weighted(weights, modelsdict):
+
+def aggregate_weighted(weights, modelsdict, forecast_size):
+    df_copy = list(modelsdict.values())[0].copy()
     somma = 0
     for mod in weights:
-        somma += modelsdict[mod].tail(27)*weights[mod]
+        somma += modelsdict[mod].tail(forecast_size)*weights[mod]
     for index, row in somma.iterrows():
-        modelsdict['forecast_avg'].loc[index] = row["vendite"]
-    return modelsdict['forecast_avg']
+        df_copy.loc[index] = row["vendite"]
+    return df_copy

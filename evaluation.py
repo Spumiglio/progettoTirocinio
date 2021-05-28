@@ -178,11 +178,6 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config, model
     return errors
 
 
-def evaluate_sarima_forecasts(df):
-    # TODO
-    pass
-
-
 # root mean squared error or rmse
 def measure_rmse(actual, predicted):
     return sqrt(mean_squared_error(actual, predicted))

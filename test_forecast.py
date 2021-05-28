@@ -273,7 +273,7 @@ def main():
     plot_dataframe(aggregate, test, plot_name="Aggregate: " + colore, forecasting_indexes=forecast_index)
 
     weight = model_weighted(forecast_driftict, test)
-    weighted = aggregate_weighted(weight, forecast_driftict)
+    weighted = aggregate_weighted(weight, forecast_driftict, len(test.index))
     plot_dataframe(weighted, test, plot_name="Aggregate Weighted: " + colore, forecasting_indexes=forecast_index)
 
     MAEl = []
