@@ -65,7 +65,8 @@ def prediction_interval(forecast_series, c=95):
     return forecast_series - (c_s[c] * stdev(forecast_series)), forecast_series + (c_s[c] * stdev(forecast_series))
 
 
-def evaluate_simple_forecasts(df_train, df_test, data_column_name, config, models, season=26):
+def evaluate_simple_forecasts(df_train, df_test, data_column_name, config, models, weight, forecast_driftict,
+                              season=26):
     # Naive
     df_train_copy = df_train.copy()
     naive_errors = {}
@@ -131,6 +132,13 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config, model
     aggregate_error['RMSE'] = rmse(df_aggregate[data_column_name], df_test[data_column_name])
     aggregate_error['MASE'] = mase(df_aggregate[data_column_name], df_test[data_column_name])
 
+    # Aggregate Weighted Models
+    aggregate_weighted_error = {}
+    df_aggregate_weighted = aggregate_weighted(weight, forecast_driftict)
+    aggregate_weighted_error['MAE'] = mae(df_aggregate_weighted[data_column_name], df_test[data_column_name])
+    aggregate_weighted_error['RMSE'] = rmse(df_aggregate_weighted[data_column_name], df_test[data_column_name])
+    aggregate_weighted_error['MASE'] = mase(df_aggregate_weighted[data_column_name], df_test[data_column_name])
+
     # Sarima
     df_train_copy = df_train.copy()
     sarima_ets_error = {}
@@ -161,6 +169,10 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config, model
               'AGG': [aggregate_error['MAE'], aggregate_error['RMSE'],
                       aggregate_error['MASE'], sum([aggregate_error['MAE'], aggregate_error['RMSE'],
                                                     aggregate_error['MASE']])],
+              'AGG-WGT': [aggregate_weighted_error['MAE'], aggregate_weighted_error['RMSE'],
+                       aggregate_weighted_error['MASE'],
+                       sum([aggregate_weighted_error['MAE'], aggregate_weighted_error['RMSE'],
+                            aggregate_weighted_error['MASE']])],
               }
     # print(errors)
     return errors
@@ -271,8 +283,9 @@ def best_aggregate_config(models, test):
     vals = list(error_dict.values())
     return [keys[vals.index(min(vals))], error_dict]
 
-def model_weighted(models,test):
-    error_dict= {}
+
+def model_weighted(models, test):
+    error_dict = {}
     for model in models:
         error = mae(models[model]['vendite'], test['vendite'])
         error_dict[model] = error
