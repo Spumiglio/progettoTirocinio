@@ -134,7 +134,7 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config, model
 
     # Aggregate Weighted Models
     aggregate_weighted_error = {}
-    df_aggregate_weighted = aggregate_weighted(weight, forecast_driftict)
+    df_aggregate_weighted = aggregate_weighted(weight, forecast_driftict, len(df_test.index))
     aggregate_weighted_error['MAE'] = mae(df_aggregate_weighted[data_column_name], df_test[data_column_name])
     aggregate_weighted_error['RMSE'] = rmse(df_aggregate_weighted[data_column_name], df_test[data_column_name])
     aggregate_weighted_error['MASE'] = mase(df_aggregate_weighted[data_column_name], df_test[data_column_name])
