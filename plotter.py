@@ -12,8 +12,8 @@ def plot_dataframe(df, test = 0, type_of_plot="L", plot_name="Vendite totali", f
         df_temp['vendite'] = historic
         y = df_temp['vendite']
         f = df_temp['forecasting']
-        plt.plot(x, y, 'r',  f, 'b')
-        plt.plot(test)
+        plt.plot(x, y, 'r',  f, '#192dff')
+        plt.plot(test, '#af8dc3')
         plt.xlabel("Settimane")
         plt.ylabel("Totale vendite")
         plt.legend(["Train","Forecast","Test"])
