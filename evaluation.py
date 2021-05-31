@@ -170,9 +170,9 @@ def evaluate_simple_forecasts(df_train, df_test, data_column_name, config, model
                       aggregate_error['MASE'], sum([aggregate_error['MAE'], aggregate_error['RMSE'],
                                                     aggregate_error['MASE']])],
               'AGG-WGT': [aggregate_weighted_error['MAE'], aggregate_weighted_error['RMSE'],
-                       aggregate_weighted_error['MASE'],
-                       sum([aggregate_weighted_error['MAE'], aggregate_weighted_error['RMSE'],
-                            aggregate_weighted_error['MASE']])],
+                          aggregate_weighted_error['MASE'],
+                          sum([aggregate_weighted_error['MAE'], aggregate_weighted_error['RMSE'],
+                               aggregate_weighted_error['MASE']])],
               }
     # print(errors)
     return errors
