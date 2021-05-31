@@ -15,25 +15,25 @@ def main():
 
     # Naive
     forecast_naive = naive(train.copy(), train.index[train.index.size - 1], week_to_forecast=len(test.index))
-    plot_dataframe(forecast_naive, test, plot_name="Naive" + colore, forecasting_indexes=forecast_index)
+    plot_dataframe(forecast_naive, test, plot_name="Naive: " + colore, forecasting_indexes=forecast_index)
 
     # Seasonal naive
     forecast_sn = seasonal_naive_forecasting(train.copy(), train.index[train.index.size - 1], 26, 1,
                                              week_to_forecast=len(test.index))
-    plot_dataframe(forecast_sn, test, plot_name="Seasonal Naive" + colore, forecasting_indexes=forecast_index)
+    plot_dataframe(forecast_sn, test, plot_name="Seasonal Naive: " + colore, forecasting_indexes=forecast_index)
 
     # Average
     forecast_avg = average_forecasting(train.copy(), train.index[train.index.size - 1],
                                        week_to_forecast=len(test.index))
-    plot_dataframe(forecast_avg, test, plot_name="Average" + colore, forecasting_indexes=forecast_index)
+    plot_dataframe(forecast_avg, test, plot_name="Average: " + colore, forecasting_indexes=forecast_index)
 
     # Drift
     forecast_drift = driftmethod(train.copy(), train.index[train.index.size - 1], week_to_forecast=len(test.index))
-    plot_dataframe(forecast_drift, test, plot_name="Drift" + colore, forecasting_indexes=forecast_index)
+    plot_dataframe(forecast_drift, test, plot_name="Drift: " + colore, forecasting_indexes=forecast_index)
 
     # SES (Simple Exponential Smoothing)
     forecast_ses = smpExpSmoth(train.copy(), len(test.index))
-    plot_dataframe(forecast_ses, test, plot_name='Simple Exponential Smoothing' + colore, forecasting_indexes=forecast_index)
+    plot_dataframe(forecast_ses, test, plot_name='Simple Exponential Smoothing: ' + colore, forecasting_indexes=forecast_index)
 
     if colore == "giallo":
         # Seasonal Exp Smoothing
@@ -148,7 +148,7 @@ def main():
     elif colore == 'fantasia':
         # Holt-Winters
         forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=True, box_cox=0.1)
-        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters: " + colore, forecasting_indexes=train.index.size - 1)
 
         # SARIMA
         scores = grid_search(train['vendite'].copy().values.tolist(), sarima_configs(), n_test=3)
@@ -156,11 +156,11 @@ def main():
             pass
         cfg = ast.literal_eval(cfg)
         forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0.1)
-        plot_dataframe(forecast_sa, test, plot_name="SARIMA" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_sa, test, plot_name="SARIMA: " + colore, forecasting_indexes=train.index.size - 1)
     elif colore == 'nero':
         # Holt-Winters
         forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=0.1)
-        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters: " + colore, forecasting_indexes=train.index.size - 1)
 
         # SARIMA
         scores = grid_search(train['vendite'].copy().values.tolist(), sarima_configs(), n_test=3)
@@ -168,11 +168,11 @@ def main():
             pass
         cfg = ast.literal_eval(cfg)
         forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0)
-        plot_dataframe(forecast_sa, test, plot_name="SARIMA" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_sa, test, plot_name="SARIMA: " + colore, forecasting_indexes=train.index.size - 1)
     elif colore == 'rosa':
         # Holt-Winters
         forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=True, box_cox=0)
-        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters: " + colore, forecasting_indexes=train.index.size - 1)
 
         # SARIMA
         scores = grid_search(train['vendite'].copy().values.tolist(), sarima_configs(), n_test=3)
@@ -180,12 +180,12 @@ def main():
             pass
         cfg = ast.literal_eval(cfg)
         forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0)
-        plot_dataframe(forecast_sa, test, plot_name="SARIMA" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_sa, test, plot_name="SARIMA: " + colore, forecasting_indexes=train.index.size - 1)
     elif colore == 'bianco':
         # Holt-Winters
         forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=0.1,
                                             rmv_outliers=False)
-        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters: " + colore, forecasting_indexes=train.index.size - 1)
 
         # SARIMA
         scores = grid_search(train['vendite'].copy().values.tolist(), sarima_configs(), n_test=3)
@@ -194,12 +194,12 @@ def main():
         cfg = ast.literal_eval(cfg)
         forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0,
                                       rmv_outliers=False)
-        plot_dataframe(forecast_sa, test, plot_name="SARIMA" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_sa, test, plot_name="SARIMA: " + colore, forecasting_indexes=train.index.size - 1)
     elif colore == 'jeans':
         # Holt-Winters
         forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=0,
                                             rmv_outliers=False)
-        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters: " + colore, forecasting_indexes=train.index.size - 1)
 
         # SARIMA
         scores = grid_search(train['vendite'].copy().values.tolist(), sarima_configs(), n_test=3)
@@ -207,31 +207,31 @@ def main():
             pass
         cfg = ast.literal_eval(cfg)
         forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0)
-        plot_dataframe(forecast_sa, test, plot_name="SARIMA" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_sa, test, plot_name="SARIMA: " + colore, forecasting_indexes=train.index.size - 1)
     elif colore == 'beige':
         forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=True, box_cox=0)
-        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters: " + colore, forecasting_indexes=train.index.size - 1)
 
         scores = grid_search(train['vendite'].copy().values.tolist(), sarima_configs(), n_test=3)
         for cfg, error in scores[:3]:
             pass
         cfg = ast.literal_eval(cfg)
         forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0)
-        plot_dataframe(forecast_sa, test, plot_name="SARIMA" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_sa, test, plot_name="SARIMA: " + colore, forecasting_indexes=train.index.size - 1)
     elif colore == 'grigio':
         forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=0)
-        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters: " + colore, forecasting_indexes=train.index.size - 1)
 
         scores = grid_search(train['vendite'].copy().values.tolist(), sarima_configs(), n_test=3)
         for cfg, error in scores[:3]:
             pass
         cfg = ast.literal_eval(cfg)
         forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=False, box_cox=0)
-        plot_dataframe(forecast_sa, test, plot_name="SARIMA" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_sa, test, plot_name="SARIMA: " + colore, forecasting_indexes=train.index.size - 1)
     elif colore == 'verde militare':
         forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=0.1,
                                             rmv_outliers=False)
-        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters: " + colore, forecasting_indexes=train.index.size - 1)
 
         scores = grid_search(train['vendite'].copy().values.tolist(), sarima_configs(), n_test=3)
         for cfg, error in scores[:3]:
@@ -239,11 +239,11 @@ def main():
         cfg = ast.literal_eval(cfg)
         forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0,
                                       rmv_outliers=False)
-        plot_dataframe(forecast_sa, test, plot_name="SARIMA" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_sa, test, plot_name="SARIMA: " + colore, forecasting_indexes=train.index.size - 1)
     elif colore == 'rosso':
         forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=0,
                                             rmv_outliers=False)
-        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters: " + colore, forecasting_indexes=train.index.size - 1)
 
         scores = grid_search(train['vendite'].copy().values.tolist(), sarima_configs(), n_test=3)
         for cfg, error in scores[:3]:
@@ -251,18 +251,18 @@ def main():
         cfg = ast.literal_eval(cfg)
         forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0,
                                       rmv_outliers=False)
-        plot_dataframe(forecast_sa, test, plot_name="SARIMA" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_sa, test, plot_name="SARIMA: " + colore, forecasting_indexes=train.index.size - 1)
     elif colore == 'verde':
         forecast_hw = seasonalExp_smoothing(train.copy(), len(test.index), decompositon=False, box_cox=0.1,
                                             rmv_outliers=False)
-        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_hw, test, plot_name="Holt-Winters: " + colore, forecasting_indexes=train.index.size - 1)
 
         scores = grid_search(train['vendite'].copy().values.tolist(), sarima_configs(), n_test=3)
         for cfg, error in scores[:3]:
             pass
         cfg = ast.literal_eval(cfg)
         forecast_sa = sarima_forecast(train.copy(), cfg, len(test.index), decomposition=True, box_cox=0.1)
-        plot_dataframe(forecast_sa, test, plot_name="SARIMA" + colore, forecasting_indexes=train.index.size - 1)
+        plot_dataframe(forecast_sa, test, plot_name="SARIMA: " + colore, forecasting_indexes=train.index.size - 1)
 
     forecast_driftict = {'forecast_avg': forecast_avg, 'forecast_sn': forecast_sn,
                          'forecast_naive': forecast_naive, 'forecast_drift': forecast_drift,
