@@ -11,7 +11,7 @@ from scipy import stats
 
 
 def main():
-    colore = 'fantasia'
+    colore = 'rosa'
     cfg = None
     train = prepare_data(colore)
     forecast_index = train.index.size - 1
@@ -288,7 +288,6 @@ def prepare_data(colore):
                                            end=dativendita_colore.index[len(dativendita_colore.index) - 1],
                                            fill_mode='V', fill_value=0)
     return dativendita_colore
-
 
 
 if __name__ == '__main__':

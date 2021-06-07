@@ -60,11 +60,6 @@ def diff_val(series, lag=1):
     return summ
 
 
-def prediction_interval(forecast_series, c=95):
-    c_s = {80: 1.28, 85: 1.44, 90: 1.64, 95: 1.96, 96: 2.05, 97: 2.17, 98: 2.33, 99: 2.58}
-    return forecast_series - (c_s[c] * stdev(forecast_series)), forecast_series + (c_s[c] * stdev(forecast_series))
-
-
 def evaluate_simple_forecasts(df_train, df_test, data_column_name, config, models, weight, forecast_driftict,
                               season=26):
     # Naive
